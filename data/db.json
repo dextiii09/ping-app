@@ -1,0 +1,78 @@
+{
+  "users": [
+    {
+      "email": "a@gmail.com",
+      "password": "a",
+      "role": "INFLUENCER",
+      "isVerified": false,
+      "id": "1767363576147",
+      "createdAt": "2026-01-02T14:19:36.147Z"
+    },
+    {
+      "email": "demo@business.com",
+      "password": "password123",
+      "role": "BUSINESS",
+      "isVerified": false,
+      "id": "1767364202474",
+      "createdAt": "2026-01-02T14:30:02.475Z"
+    },
+    {
+      "email": "ab@gmail.com",
+      "password": "a",
+      "role": "INFLUENCER",
+      "isVerified": false,
+      "id": "1767431557995",
+      "createdAt": "2026-01-03T09:12:37.995Z"
+    },
+    {
+      "email": "prakashsuraj06610@gmail.com",
+      "password": "Arif@123",
+      "role": "INFLUENCER",
+      "isVerified": false,
+      "id": "1767437897585",
+      "createdAt": "2026-01-03T10:58:17.585Z"
+    }
+  ],
+  "businessProfiles": [
+    {
+      "userId": "1767364202474",
+      "companyName": "Demo Corp",
+      "id": "1767364202477"
+    }
+  ],
+  "influencerProfiles": [
+    {
+      "userId": "1767363576147",
+      "fullName": "a",
+      "niche": "tech",
+      "platform": "Instagram",
+      "username": "a",
+      "followers": "10",
+      "engagement": "1",
+      "bio": "a",
+      "id": "1767363576149"
+    },
+    {
+      "userId": "1767431557995",
+      "fullName": "a",
+      "niche": "tech",
+      "platform": "Instagram",
+      "username": "a",
+      "followers": "10",
+      "engagement": "1",
+      "bio": "a",
+      "id": "1767431557997"
+    },
+    {
+      "userId": "1767437897585",
+      "fullName": "Arif raza",
+      "niche": "fashion",
+      "platform": "Instagram",
+      "username": "arif44",
+      "followers": "22k",
+      "engagement": "10%",
+      "bio": "",
+      "id": "1767437897587"
+    }
+  ]
+}

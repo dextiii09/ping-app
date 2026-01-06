@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Store hashed passwords
+  role      String   // "BUSINESS", "INFLUENCER", "ADMIN"
+  isVerified Boolean @default(false)
+  otp       String?  // Temporary OTP code
+  otpExpires DateTime? // Expiration time for OTP
+  tier      String   @default("free") // "free", "plus", "gold", "platinum"
+  
+  // Consumables
+  superLikes Int     @default(3)
+  boosts     Int     @default(0)
+  preferences Json?
+  
+  createdAt DateTime @default(now())
+
+  // Profiles
+  businessProfile   BusinessProfile?
+  influencerProfile InfluencerProfile?
+
+  // Swipes made by this user
+  swipesMade Swipe[] @relation("Swiper")
+  // Swipes received by this user
+  swipesReceived Swipe[] @relation("SwipedOn")
+  
+  // Matches
+  matchesAsBusiness Match[] @relation("BusinessMatch")
+  matchesAsInfluencer Match[] @relation("InfluencerMatch")
+
+  messagesSent Message[] @relation("Sender")
+  messagesReceived Message[] @relation("Receiver")
+
+  notifications Notification[]
+  supportTickets SupportTicket[]
+  
+  reportsMade     Report[] @relation("Reporter")
+  reportsReceived Report[] @relation("Reported")
+}
+
+// ... existing models ...
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // "MATCH", "MESSAGE", "SYSTEM"
+  relatedId String?  // ID of Match or Message
+  content   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model BusinessProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  companyName String
+  niche       String
+  location    String
+  budget      String
+  requirements String
+  website     String?
+  logo        String?
+  images      String?  // JSON string of image URLs
+  verificationDocs String? // JSON string of document URLs
+}
+
+model InfluencerProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  fullName        String
+  instagramHandle String?
+  niche           String
+  location        String
+  bio             String?
+  images          String?  // JSON string of image URLs
+}
+
+model Swipe {
+  id        String   @id @default(uuid())
+  swiperId  String
+  swiper    User     @relation("Swiper", fields: [swiperId], references: [id])
+  swipedOnId String
+  swipedOn  User     @relation("SwipedOn", fields: [swipedOnId], references: [id])
+  direction String   // "RIGHT", "LEFT"
+  createdAt DateTime @default(now())
+
+  @@unique([swiperId, swipedOnId])
+}
+
+model Match {
+  id            String   @id @default(uuid())
+  businessId    String
+  business      User     @relation("BusinessMatch", fields: [businessId], references: [id])
+  influencerId  String
+  influencer    User     @relation("InfluencerMatch", fields: [influencerId], references: [id])
+  createdAt     DateTime @default(now())
+  
+  messages      Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id])
+  senderId  String
+  sender    User     @relation("Sender", fields: [senderId], references: [id])
+  receiverId String
+  receiver  User     @relation("Receiver", fields: [receiverId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model SupportTicket {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  subject   String
+  message   String
+  status    String   @default("OPEN") // "OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reporterId  String
+  reporter    User     @relation("Reporter", fields: [reporterId], references: [id])
+  targetId    String
+  target      User     @relation("Reported", fields: [targetId], references: [id])
+  type        String   // "PROFILE", "CHAT"
+  reason      String
+  status      String   @default("PENDING") // "PENDING", "REVIEWED", "DISMISSED", "BANNED"
+  contextId   String?  // Optional ID for context (e.g., Match ID)
+  createdAt   DateTime @default(now())
+}
