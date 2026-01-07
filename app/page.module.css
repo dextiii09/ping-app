@@ -4,6 +4,8 @@
   position: relative;
   overflow-x: hidden;
   background: var(--background);
+  width: 100%;
+  max-width: 100vw;
 }
 
 /* Dynamic Background */
@@ -11,7 +13,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   z-index: 0;
   background:
@@ -30,6 +32,8 @@
   background: radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.2), transparent 60%);
   animation: rotate 20s linear infinite;
   z-index: 0;
+  max-width: 100vw;
+  /* Ensure mesh doesn't force overflow */
 }
 
 @keyframes rotate {
@@ -86,6 +90,7 @@
   text-align: center;
   padding: 2rem;
   margin-top: 60px;
+  width: 100%;
 }
 
 .badge {
@@ -113,6 +118,7 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  max-width: 100%;
 }
 
 .hero p {
@@ -122,6 +128,8 @@
   margin-bottom: 3rem;
   line-height: 1.6;
   animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards;
+  padding: 0 1rem;
+  /* Prevent text touching edges */
 }
 
 .ctaGroup {
@@ -173,6 +181,7 @@
   flex-wrap: wrap;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .featureCard {
@@ -212,7 +221,8 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .nav {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1rem;
+    /* Reduced padding */
   }
 
   .navLinks {
@@ -222,16 +232,23 @@
 
   .hero {
     padding: 1rem;
-    margin-top: 80px;
+    margin-top: 60px;
+    min-height: 85vh;
+    /* slightly reduce min-height to fit nav bars */
   }
 
   .hero h1 {
     font-size: 3rem;
+    /* Still strict, maybe clamp? */
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+    /* Responsive font size */
     letter-spacing: -1px;
+    margin-bottom: 1rem;
   }
 
   .hero p {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .ctaGroup {
@@ -248,10 +265,11 @@
   }
 
   .features {
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
   }
 
   .featureCard {
     width: 100%;
+    margin-bottom: 1rem;
   }
 }
