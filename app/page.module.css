@@ -20,6 +20,7 @@
     radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.15), transparent 25%);
   filter: blur(40px);
+  overflow: hidden;
 }
 
 .mesh {
@@ -32,8 +33,15 @@
   background: radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.2), transparent 60%);
   animation: rotate 20s linear infinite;
   z-index: 0;
-  max-width: 100vw;
   /* Ensure mesh doesn't force overflow */
+  max-width: 100vw;
+}
+
+@media (max-width: 768px) {
+  .mesh {
+    width: 100vw;
+    height: 100vw;
+  }
 }
 
 @keyframes rotate {
@@ -221,55 +229,68 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .nav {
-    padding: 1rem 1rem;
-    /* Reduced padding */
+    /* Use left/right 0 to ensure full width without overflow issues */
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: 1.5rem 2rem;
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+    box-sizing: border-box;
   }
 
   .navLinks {
     gap: 1rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .hero {
-    padding: 1rem;
-    margin-top: 60px;
+    /* Increase hero padding significantly */
+    padding: 2rem 2rem;
+    margin-top: 80px;
     min-height: 85vh;
-    /* slightly reduce min-height to fit nav bars */
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .hero h1 {
-    font-size: 3rem;
-    /* Still strict, maybe clamp? */
-    font-size: clamp(2.5rem, 10vw, 3.5rem);
-    /* Responsive font size */
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
     letter-spacing: -1px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    padding: 0 0.5rem;
   }
 
   .hero p {
-    font-size: 1rem;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    padding: 0 0.5rem;
   }
 
   .ctaGroup {
     flex-direction: column;
     width: 100%;
-    gap: 1rem;
+    gap: 1.2rem;
+    padding: 0 0.5rem;
   }
 
   .btnPrimary,
   .btnOutline {
     width: 100%;
-    padding: 14px 20px;
-    font-size: 1rem;
+    padding: 16px 20px;
+    font-size: 1.1rem;
   }
 
   .features {
-    padding: 3rem 1rem;
+    padding: 4rem 2rem;
   }
 
   .featureCard {
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 2rem;
   }
 }

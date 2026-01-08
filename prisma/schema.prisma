@@ -88,6 +88,8 @@ model InfluencerProfile {
   niche           String
   location        String
   bio             String?
+  followers       String?
+  engagement      String?
   images          String?  // JSON string of image URLs
 }
 

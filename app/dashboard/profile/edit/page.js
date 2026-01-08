@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../../dashboard.module.css';
@@ -15,15 +15,19 @@ export default function EditProfilePage() {
     const [smartPhotos, setSmartPhotos] = useState(true);
     const [previewImgIndex, setPreviewImgIndex] = useState(0);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    const [images, setImages] = useState([]);
 
     const [formData, setFormData] = useState({
-        about: "Let's make our 'how we met' story better than just 'on Ping'.",
-        jobTitle: "Content Creator",
+        about: "",
+        jobTitle: "",
         company: "Self Employed",
-        college: "Chandigarh University",
-        gradYear: "2026",
+        college: "",
+        gradYear: "",
         lookingFor: "Long-term partnership",
-        interests: ["Tech", "Travel", "Photography", "Coding", "Startups"], // Example tags
+        interests: ["Tech", "Travel", "Photography", "Coding", "Startups"],
         instagram: "",
         youtube: "",
         tiktok: "",
@@ -31,10 +35,102 @@ export default function EditProfilePage() {
         linkedin: ""
     });
 
+    // Fetch Profile Data
+    useEffect(() => {
+        fetch('/api/profile/update')
+            .then(res => res.json())
+            .then(data => {
+                if (data.profile) {
+                    setFormData(prev => ({
+                        ...prev,
+                        about: data.profile.about || "",
+                        instagram: data.profile.instagram || "",
+                        // map other fields if they existed in backend
+                    }));
+                    if (data.profile.images && Array.isArray(data.profile.images)) {
+                        setImages(data.profile.images);
+                    }
+                    if (data.smartPhotos !== undefined) setSmartPhotos(data.smartPhotos);
+                }
+            })
+            .catch(err => console.error(err));
+    }, []);
+
+    async function uploadFile(file) {
+        if (!file) return null;
+        const data = new FormData();
+        data.set('file', file);
+
+        try {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: data,
+            });
+            if (!res.ok) throw new Error('Upload failed');
+            const blob = await res.json();
+            return blob.url;
+        } catch (err) {
+            console.error("Upload Error:", err);
+            return null;
+        }
+    }
+
+    const handleImageUpload = async (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        const url = await uploadFile(file);
+        if (url) {
+            const newImages = [...images];
+            // If index is beyond length, push. If replacing, splice.
+            // Actually, let's just specific logic:
+            if (index < newImages.length) {
+                newImages[index] = url;
+            } else {
+                newImages.push(url);
+            }
+            setImages(newImages);
+        }
+        setUploading(false);
+    };
+
+    const handleRemoveImage = (index) => {
+        const newImages = images.filter((_, i) => i !== index);
+        setImages(newImages);
+    };
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/profile/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    images,
+                    smartPhotos
+                })
+            });
+            if (res.ok) {
+                alert("Profile Updated!");
+            } else {
+                alert("Failed to update profile");
+            }
+        } catch (e) {
+            alert("Error saving profile");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
+    // Helper to get image or placeholder
+    const getImage = (idx) => images[idx] || null;
 
     return (
         <div className={styles.dashboardContainer} style={{ padding: 0, minHeight: '100vh', background: '#000' }}>
@@ -51,6 +147,23 @@ export default function EditProfilePage() {
                     onClick={() => setActiveTab('preview')}
                 >
                     Preview
+                </button>
+                <button
+                    onClick={handleSave}
+                    disabled={loading || uploading}
+                    style={{
+                        marginLeft: 'auto',
+                        background: 'var(--primary-gradient)',
+                        border: 'none',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        opacity: (loading || uploading) ? 0.7 : 1
+                    }}
+                >
+                    {loading ? 'Saving...' : 'Save'}
                 </button>
             </div>
 
@@ -103,20 +216,53 @@ export default function EditProfilePage() {
                                 </div>
 
                                 <div className={styles.photoGrid} style={{ marginTop: '1.5rem' }}>
-                                    <div className={styles.photoUploadBox} style={{ backgroundImage: 'url(https://api.dicebear.com/7.x/avataaars/svg?seed=Felix)' }}>
-                                        <div className={styles.photoLabel}>Main</div>
-                                    </div>
-                                    <div className={styles.photoUploadBox} style={{ borderColor: '#ef4444', borderStyle: 'solid' }}>
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '1.5rem' }}>▶️</span>
-                                            <span style={{ fontSize: '0.6rem', marginTop: '4px' }}>15s Reel</span>
+                                    {[0, 1, 2, 3, 4].map((idx) => (
+                                        <div
+                                            key={idx}
+                                            className={styles.photoUploadBox}
+                                            style={{
+                                                backgroundImage: getImage(idx) ? `url(${getImage(idx)})` : 'none',
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                                position: 'relative'
+                                            }}
+                                        >
+                                            {!getImage(idx) && <span style={{ fontSize: '2rem', color: '#555' }}>+</span>}
+                                            {idx === 0 && getImage(0) && <div className={styles.photoLabel}>Main</div>}
+
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => handleImageUpload(e, idx)}
+                                                style={{ opacity: 0, position: 'absolute', inset: 0, cursor: 'pointer', zIndex: 10 }}
+                                            />
+                                            {getImage(idx) && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleRemoveImage(idx); }}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: -5,
+                                                        right: -5,
+                                                        background: 'red',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
+                                                        width: 20,
+                                                        height: 20,
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        zIndex: 20,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
                                         </div>
-                                        <input type="file" accept="video/*" style={{ opacity: 0, position: 'absolute', inset: 0, cursor: 'pointer' }} />
-                                    </div>
-                                    <div className={styles.photoUploadBox} style={{ backgroundImage: 'url(https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka)' }}></div>
-                                    <div className={styles.photoUploadBox}>+</div>
-                                    <div className={styles.photoUploadBox}>+</div>
+                                    ))}
                                 </div>
+                                {uploading && <p style={{ color: 'var(--secondary)', marginTop: 10 }}>Uploading...</p>}
                             </motion.section>
 
                             {/* ABOUT ME */}
@@ -201,7 +347,7 @@ export default function EditProfilePage() {
                             }}>
                                 {/* Story Bars */}
                                 <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', gap: 4, zIndex: 20 }}>
-                                    {mockImages.map((_, i) => (
+                                    {[0, 1, 2].map((_, i) => (
                                         <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= previewImgIndex ? 'white' : 'rgba(255,255,255,0.3)' }}></div>
                                     ))}
                                 </div>
@@ -212,12 +358,12 @@ export default function EditProfilePage() {
                                     onMouseDown={(e) => e.stopPropagation()}
                                 >
                                     <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => setPreviewImgIndex(prev => Math.max(0, prev - 1))}></div>
-                                    <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => setPreviewImgIndex(prev => Math.min(mockImages.length - 1, prev + 1))}></div>
+                                    <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => setPreviewImgIndex(prev => Math.min(images.length - 1, prev + 1))}></div>
                                 </div>
 
                                 {/* Image */}
                                 <img
-                                    src={mockImages[previewImgIndex]}
+                                    src={images.length > 0 ? images[previewImgIndex % images.length] : 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'}
                                     alt="Preview"
                                     style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
                                 />
@@ -230,10 +376,6 @@ export default function EditProfilePage() {
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
                                         <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: 'white' }}>Dhruv</h2>
                                         <span style={{ fontSize: '1.4rem', fontWeight: 400, opacity: 0.9, color: 'white' }}>22</span>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#3b82f6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', opacity: 0.8, marginBottom: 16, color: 'white' }}>
-                                        <span>📍 Chandigarh, IN</span>
                                     </div>
 
                                     {/* Action Button Lookalike */}
@@ -270,7 +412,11 @@ export default function EditProfilePage() {
 
                             {/* Large Image */}
                             <div style={{ height: '50vh', position: 'relative' }}>
-                                <img src={mockImages[previewImgIndex]} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img
+                                    src={images.length > 0 ? images[previewImgIndex % images.length] : 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'}
+                                    alt="Profile"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
                                 <div className={styles.overlay}></div>
                                 <div className={styles.premiumInfo} style={{ bottom: 40 }}>
                                     <div className={styles.nameRow}>
@@ -306,10 +452,3 @@ export default function EditProfilePage() {
         </div>
     );
 }
-
-// Helpers
-const mockImages = [
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
-    'https://api.dicebear.com/7.x/avataaars/svg?seed=Zack'
-];

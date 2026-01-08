@@ -1,0 +1,26 @@
+Alias name: android
+Creation date: 07-Jan-2026
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Ping, OU=Ping, O=Ping, L=US, ST=US, C=US
+Issuer: CN=Ping, OU=Ping, O=Ping, L=US, ST=US, C=US
+Serial number: dc7215164210b537
+Valid from: Wed Jan 07 23:55:58 IST 2026 until: Sun May 25 23:55:58 IST 2053
+Certificate fingerprints:
+	 SHA1: 79:D8:A2:C8:46:62:ED:24:DD:1B:11:D2:5D:AE:3E:C4:FC:BF:C5:39
+	 SHA256: BE:15:8A:F0:B4:AF:2D:AF:45:40:56:C4:59:D7:1E:BF:61:4E:76:FF:5A:B0:99:87:55:AF:B3:92:0C:D5:9C:94
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 8A 8E 77 A2 AC 6E 98 D5   FA 72 E2 00 4E 37 02 DA  ..w..n...r..N7..
+0010: C8 9A 35 E0                                        ..5.
+]
+]
+

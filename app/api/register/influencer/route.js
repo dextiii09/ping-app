@@ -7,10 +7,10 @@ import { sendOTP } from '../../../lib/email';
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { email, password, fullName, niche, platform, instagram, followers, engagement, bio, location } = body;
+        const { email, password, fullName, niche, platform, username, instagram, followers, engagement, bio, location, images } = body;
 
         // Validation
-        if (!email || !password || !niche || (!fullName && !instagram)) {
+        if (!email || !password || !niche || (!fullName && !username)) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
@@ -28,7 +28,7 @@ export async function POST(request) {
         const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
         // Prepare Bio
-        const fullBio = `${bio || ''} | ${followers || '0'} Followers | ${engagement || '0%'} Engagement`;
+        const fullBio = `${bio || ''}`;
 
         // Create User & Influencer Profile
         const newUser = await db.user.create({
@@ -42,13 +42,14 @@ export async function POST(request) {
                 tier: 'free',
                 influencerProfile: {
                     create: {
-                        fullName: fullName || instagram,
-                        instagramHandle: instagram,
+                        fullName: fullName || username,
+                        instagramHandle: username || instagram,
                         niche: niche || 'General',
                         followers: followers || '0',
+                        engagement: engagement || '0%',
                         bio: fullBio,
                         location: location || 'Global',
-                        images: "[]"
+                        images: images || "[]"
                     }
                 }
             }

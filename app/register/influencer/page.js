@@ -9,6 +9,10 @@ export default function InfluencerRegister() {
     const [platform, setPlatform] = useState("Instagram");
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
+
+    // File State
+    const [photoFile, setPhotoFile] = useState(null);
+
     const totalSteps = 3;
 
     const [formData, setFormData] = useState({
@@ -25,6 +29,12 @@ export default function InfluencerRegister() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhotoFile(e.target.files[0]);
+        }
+    };
+
     const nextStep = (e) => {
         e.preventDefault();
         if (step < totalSteps) setStep(step + 1);
@@ -34,25 +44,50 @@ export default function InfluencerRegister() {
         if (step > 1) setStep(step - 1);
     };
 
+    async function uploadFile(file) {
+        if (!file) return null;
+        const data = new FormData();
+        data.set('file', file);
+
+        try {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: data,
+            });
+            if (!res.ok) throw new Error('Upload failed');
+            const blob = await res.json();
+            return blob.url;
+        } catch (err) {
+            console.error("Upload Error:", err);
+            return null;
+        }
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         setLoading(true);
 
         try {
+            // 1. Upload Photo
+            const photoUrl = await uploadFile(photoFile);
+
+            // 2. Submit Registration
             const res = await fetch('/api/register/influencer', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
                     niche,
-                    platform
+                    platform,
+                    images: photoUrl ? JSON.stringify([photoUrl]) : null
                 })
             });
 
             if (res.ok) {
                 setShowModal(true);
             } else {
-                alert("Registration Failed");
+                const data = await res.json();
+                alert(data.error || "Registration Failed");
             }
         } catch (err) {
             alert("Connection Error");
@@ -117,6 +152,19 @@ export default function InfluencerRegister() {
                                         required
                                         placeholder="••••••••"
                                     />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>Profile Photo</label>
+                                    <div className={styles.fileInput} onClick={() => document.getElementById('photo-upload').click()}>
+                                        <span>{photoFile ? `📸 ${photoFile.name}` : 'upload_icon Upload Photo'}</span>
+                                        <input
+                                            id="photo-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleFileChange}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}

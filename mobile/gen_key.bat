@@ -1,0 +1,1 @@
+"C:\Users\dhruv\.bubblewrap\jdk\jdk-17.0.11+9\bin\keytool.exe" -genkeypair -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass ping123 -keypass ping123 -dname "CN=Ping, OU=Ping, O=Ping, L=US, ST=US, C=US"
