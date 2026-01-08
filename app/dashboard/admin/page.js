@@ -126,14 +126,14 @@ export default function AdminPage() {
     return (
         <div className={styles.dashboardContainer} style={{ minHeight: '100vh', background: '#09090b' }}>
             {/* Header */}
-            <div style={{ padding: '2rem 2rem 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '2rem 2rem 0', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(to right, #ec4899, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: 10 }}>
                         <Icons.Shield /> Admin Portal
                     </h1>
                     <p style={{ color: '#aaa', marginTop: 5 }}>Control center for moderation and support.</p>
                 </div>
-                <div style={{ display: 'flex', gap: 20 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', width: '100%', maxWidth: '600px' }}>
                     <StatCard label="Total Users" value={stats.users} color="#3b82f6" />
                     <StatCard label="Pending Reports" value={stats.reports} color="#ef4444" />
                     <StatCard label="Open Tickets" value={stats.tickets} color="#eab308" />
@@ -141,7 +141,7 @@ export default function AdminPage() {
             </div>
 
             {/* Tabs */}
-            <div style={{ padding: '0 2rem', marginTop: '2rem', borderBottom: '1px solid #27272a', display: 'flex', gap: 30 }}>
+            <div style={{ padding: '0 2rem', marginTop: '2rem', borderBottom: '1px solid #27272a', display: 'flex', gap: 30, overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100%' }}>
                 <TabBtn label="User Management" icon={<Icons.Users />} active={activeTab === 'users'} onClick={() => setActiveTab('users')} />
                 <TabBtn label="Reports & Safety" icon={<Icons.Reports />} count={stats.reports} active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
                 <TabBtn label="Support Tickets" icon={<Icons.Support />} count={stats.tickets} active={activeTab === 'support'} onClick={() => setActiveTab('support')} />
@@ -356,7 +356,11 @@ const TabBtn = ({ label, icon, active, onClick, count }) => (
     </button>
 );
 
-const Table = ({ children }) => <table style={{ width: '100%', borderCollapse: 'collapse', color: '#e4e4e7' }}>{children}</table>;
+const Table = ({ children }) => (
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', color: '#e4e4e7', minWidth: '600px' }}>{children}</table>
+    </div>
+);
 const THead = ({ children }) => <thead style={{ borderBottom: '1px solid #27272a', color: '#a1a1aa', fontSize: '0.9rem', textAlign: 'left' }}>{children}</thead>;
 const Th = ({ children, align = 'left' }) => <th style={{ padding: '15px 10px', fontWeight: 'normal', textAlign: align }}>{children}</th>;
 const Td = ({ children, align = 'left' }) => <td style={{ padding: '15px 10px', textAlign: align }}>{children}</td>;

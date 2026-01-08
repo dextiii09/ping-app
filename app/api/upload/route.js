@@ -10,7 +10,7 @@ export async function POST(request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         await jwtVerify(token, secret);
 
         // 2. Process File
@@ -21,14 +21,25 @@ export async function POST(request) {
             return NextResponse.json({ error: "No file provided" }, { status: 400 });
         }
 
-        // 3. Upload to Vercel Blob
+        // 3. Security Validation
+        // Check File Size (Max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            return NextResponse.json({ error: "File too large (Max 5MB)" }, { status: 400 });
+        }
+
+        // Check MIME Type
+        if (!file.type.startsWith('image/')) {
+            return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 });
+        }
+
+        // 4. Upload to Vercel Blob
         // We append a timestamp to the filename to avoid conflicts and cache issues
         const filename = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
         const blob = await put(filename, file, {
             access: 'public',
         });
 
-        // 4. Return the new URL
+        // 5. Return the new URL
         return NextResponse.json(blob);
 
     } catch (error) {

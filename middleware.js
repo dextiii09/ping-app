@@ -18,7 +18,7 @@ export async function middleware(request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         try {
-            const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
+            const secret = new TextEncoder().encode(process.env.JWT_SECRET);
             await jwtVerify(token, secret);
             return NextResponse.next();
         } catch (err) {
@@ -42,7 +42,7 @@ export async function middleware(request) {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         await jwtVerify(token, secret);
         return NextResponse.next();
     } catch (err) {
