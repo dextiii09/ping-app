@@ -28,6 +28,23 @@ export async function middleware(request) {
 
     // 2. Allow Public Pages
     if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+        // Auto-redirect logged-in users away from auth pages
+        const token = request.cookies.get('auth_token')?.value;
+        if (token && (pathname === '/login' || pathname === '/register' || pathname === '/')) {
+            try {
+                const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+                const { payload } = await jwtVerify(token, secret);
+
+                // Redirect based on role
+                if (payload.role === 'BUSINESS') return NextResponse.redirect(new URL('/dashboard/business', request.url));
+                if (payload.role === 'INFLUENCER') return NextResponse.redirect(new URL('/dashboard/influencer', request.url));
+                if (payload.role === 'ADMIN') return NextResponse.redirect(new URL('/dashboard/admin', request.url));
+
+                return NextResponse.redirect(new URL('/dashboard/matching', request.url));
+            } catch (err) {
+                // Token invalid, allow access to public page
+            }
+        }
         return NextResponse.next();
     }
 
