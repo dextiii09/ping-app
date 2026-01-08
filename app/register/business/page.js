@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from '../../auth.module.css';
+import Toast from '../../components/Toast';
 
 export default function BusinessRegister() {
     const [step, setStep] = useState(1);
@@ -19,6 +20,7 @@ export default function BusinessRegister() {
 
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState(null);
 
     // File States
     const [logoFile, setLogoFile] = useState(null);
@@ -68,6 +70,7 @@ export default function BusinessRegister() {
     async function handleSubmit(e) {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         try {
             // 1. Upload Files First
@@ -89,10 +92,10 @@ export default function BusinessRegister() {
                 setShowModal(true);
             } else {
                 const data = await res.json();
-                alert(data.error || "Registration Failed");
+                setError(data.error || "Registration Failed");
             }
         } catch (err) {
-            alert("Error connecting to server");
+            setError("Error connecting to server");
         } finally {
             setLoading(false);
         }
@@ -100,6 +103,7 @@ export default function BusinessRegister() {
 
     return (
         <div className={styles.splitContainer}>
+            <Toast message={error} type="error" onClose={() => setError(null)} />
             {/* Introduction Side */}
             <div className={styles.formSide}>
                 <div className={styles.wizardContainer}>

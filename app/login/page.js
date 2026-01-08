@@ -3,14 +3,17 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from '../auth.module.css';
+import Toast from '../components/Toast';
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const router = useRouter();
 
     async function handleSubmit(e) {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         const email = e.target[0].value;
         const password = e.target[1].value;
@@ -36,10 +39,10 @@ export default function Login() {
                     router.push('/dashboard/matching'); // Fallback
                 }
             } else {
-                alert("Invalid Credentials");
+                setError("Invalid Credentials");
             }
         } catch (err) {
-            alert("Login Error");
+            setError("Login Failed");
         } finally {
             setLoading(false);
         }
@@ -47,6 +50,8 @@ export default function Login() {
 
     return (
         <div className={styles.splitContainer}>
+            <Toast message={error} type="error" onClose={() => setError(null)} />
+
             <div className={styles.formSide} style={{ maxWidth: '450px' }}>
                 <div style={{
                     textAlign: 'center',
