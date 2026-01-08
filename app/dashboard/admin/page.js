@@ -123,6 +123,18 @@ export default function AdminPage() {
     };
 
 
+    // Logout
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/logout', { method: 'POST' });
+            router.push('/login');
+            router.refresh();
+        } catch (error) {
+            console.error('Logout failed', error);
+        }
+    };
+
+
     return (
         <div className={styles.dashboardContainer} style={{ minHeight: '100vh', background: '#09090b' }}>
             {/* Header */}
@@ -133,10 +145,16 @@ export default function AdminPage() {
                     </h1>
                     <p style={{ color: '#aaa', marginTop: 5 }}>Control center for moderation and support.</p>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', width: '100%', maxWidth: '600px' }}>
-                    <StatCard label="Total Users" value={stats.users} color="#3b82f6" />
-                    <StatCard label="Pending Reports" value={stats.reports} color="#ef4444" />
-                    <StatCard label="Open Tickets" value={stats.tickets} color="#eab308" />
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', maxWidth: '600px', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '1rem', flex: 1 }}>
+                        <StatCard label="Total Users" value={stats.users} color="#3b82f6" />
+                        <StatCard label="Pending" value={stats.reports} color="#ef4444" />
+                        <StatCard label="Tickets" value={stats.tickets} color="#eab308" />
+                    </div>
+                    <button onClick={handleLogout} style={{ padding: '10px 20px', background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7', borderRadius: 8, cursor: 'pointer', fontWeight: 600, height: 'fit-content' }}>
+                        Logout
+                    </button>
                 </div>
             </div>
 
