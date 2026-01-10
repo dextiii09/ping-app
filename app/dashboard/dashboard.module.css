@@ -139,6 +139,18 @@
     /* Hide scrollbar Chrome/Safari */
 }
 
+@media (max-width: 768px) {
+    .carousel {
+        margin-top: 15vh;
+        /* Push cards down as requested */
+        padding-bottom: 2rem;
+    }
+
+    .paginationContainer {
+        margin-bottom: 2rem;
+    }
+}
+
 .carouselCard {
     min-width: 100%;
     /* Fit container exactly */
@@ -1789,6 +1801,7 @@
     font-weight: 900;
     background: linear-gradient(to right, #ff4b1f, #ff9068);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 20px;
 }
