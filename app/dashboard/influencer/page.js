@@ -78,8 +78,7 @@ export default function CreatorHome() {
         <div className={styles.dashboardContainer}>
             {/* STICKY HEADER */}
             <motion.header
-                className={styles.header}
-                style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(9, 9, 11, 0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                className={styles.floatingHeader}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}

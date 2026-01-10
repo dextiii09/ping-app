@@ -94,19 +94,19 @@ export default function MessagesPage() {
     return (
         <div className={styles.container}>
             {/* SIDEBAR */}
-            <div className={styles.sidebar}>
+            <div className={`${styles.sidebar} ${activeMatch ? styles.hiddenOnMobile : ''}`}>
                 <div style={{ padding: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <button
                         onClick={() => router.back()}
-                        style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 0, display: 'flex' }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, display: 'flex' }}
                     >
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 12H5M12 19l-7-7 7-7" /></svg>
                     </button>
                     Messages
                 </div>
                 <div className={styles.matchList}>
-                    {loading && <div style={{ padding: 20, color: '#666', fontSize: '0.9rem' }}>Loading conversations...</div>}
-                    {!loading && matches.length === 0 && <div style={{ padding: 20, color: '#666', fontSize: '0.9rem' }}>No matches yet. Go swipe!</div>}
+                    {loading && <div style={{ padding: 20, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading conversations...</div>}
+                    {!loading && matches.length === 0 && <div style={{ padding: 20, color: 'var(--text-muted)', fontSize: '0.9rem' }}>No matches yet. Go swipe!</div>}
 
                     {matches.map(match => (
                         <div
@@ -120,7 +120,7 @@ export default function MessagesPage() {
                             <div style={{ overflow: 'hidden', width: '100%' }}>
                                 <div className={styles.matchName}>
                                     {match.name}
-                                    <span style={{ float: 'right', fontSize: '0.7rem', color: '#555', fontWeight: 400 }}>
+                                    <span style={{ float: 'right', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 400 }}>
                                         {new Date(match.lastMsgTime).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                     </span>
                                 </div>
@@ -132,11 +132,21 @@ export default function MessagesPage() {
             </div>
 
             {/* CHAT AREA */}
-            <div className={styles.chatArea}>
+            <div className={`${styles.chatArea} ${!activeMatch ? styles.hiddenOnMobile : ''}`}>
                 {activeMatch ? (
                     <>
                         <div className={styles.chatHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <button
+                                    onClick={() => setActiveMatch(null)}
+                                    className={styles.mobileBackBtn}
+                                    style={{
+                                        display: 'none', /* Hidden by default, shown via media query in css ideally or inline logic */
+                                        background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', marginRight: 5
+                                    }}
+                                >
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                                </button>
                                 <div className={styles.avatar}>
                                     {activeMatch.image ? <img src={activeMatch.image} alt={activeMatch.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : activeMatch.name[0]}
                                 </div>

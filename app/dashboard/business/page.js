@@ -138,16 +138,16 @@ export default function BusinessHome() {
 
     return (
         <div className={styles.dashboardContainer}>
-            {/* STICKY HEADER */}
             <motion.header
-                className={styles.header}
-                style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(9, 9, 11, 0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                className={styles.floatingHeader}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
                 <div>
-                    <h1 className="gradient-text" style={{ fontSize: '1.5rem', marginBottom: '2px' }}>{greeting}, Business 🚀</h1>
+                    <h1 style={{ fontSize: '1.5rem', marginBottom: '2px' }}>
+                        <span className="gradient-text">{greeting}, Business</span> 🚀
+                    </h1>
                     <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>Ready to scale?</p>
                 </div>
 

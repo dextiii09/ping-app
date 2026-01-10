@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '../../context/ThemeContext';
 import styles from '../dashboard.module.css';
 
 const containerVariants = {
@@ -136,6 +137,15 @@ export default function SettingsPage() {
             </header>
 
             <main style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: 100 }}>
+
+                {/* Appearance - Theme */}
+                <motion.section className={styles.settingsSection} variants={itemVariants}>
+                    <div className={styles.sectionTitle}>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        Appearance
+                    </div>
+                    <ThemeToggle />
+                </motion.section>
 
                 {/* Account Settings */}
                 <motion.section className={styles.settingsSection} variants={itemVariants}>
@@ -272,18 +282,18 @@ function PasswordModal({ onClose }) {
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                style={{ background: '#1a1a1a', padding: 30, borderRadius: 16, width: '90%', maxWidth: 400, border: '1px solid #333' }}
+                className={styles.modalBox}
             >
-                <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>Change Password</h3>
+                <h3 style={{ marginBottom: 20, fontSize: '1.2rem', color: 'var(--text-main)' }}>Change Password</h3>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-                    <input type="password" placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required style={inputStyle} />
-                    <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required style={inputStyle} />
-                    <button type="submit" style={{ padding: 12, background: 'white', color: 'black', border: 'none', borderRadius: 8, fontWeight: 'bold' }}>
+                    <input type="password" placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className={styles.input} />
+                    <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className={styles.input} />
+                    <button type="submit" style={{ padding: 12, background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 'bold', cursor: 'pointer' }}>
                         {status === 'loading' ? 'Updating...' : status === 'success' ? 'Password Changed!' : 'Update Password'}
                     </button>
                     {status && status !== 'loading' && status !== 'success' && <p style={{ color: 'red', textAlign: 'center' }}>{status}</p>}
                 </form>
-                <button onClick={onClose} style={{ marginTop: 15, width: '100%', background: 'transparent', border: 'none', color: '#888', cursor: 'pointer' }}>Cancel</button>
+                <button onClick={onClose} style={{ marginTop: 15, width: '100%', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>Cancel</button>
             </motion.div>
         </div>
     )
@@ -295,14 +305,15 @@ function DeleteModal({ onClose, onConfirm }) {
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                style={{ background: '#1a1a1a', padding: 30, borderRadius: 16, width: '90%', maxWidth: 400, border: '1px solid #ef4444' }}
+                className={styles.modalBox}
+                style={{ borderColor: '#ef4444' }}
             >
                 <h3 style={{ marginBottom: 10, fontSize: '1.2rem', color: '#ef4444' }}>⚠ Delete Account?</h3>
-                <p style={{ color: '#ccc', marginBottom: 20, lineHeight: 1.5 }}>
+                <p style={{ color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.5 }}>
                     This action is permanent and cannot be undone. All your matches, messages, and profile data will be erased forever.
                 </p>
                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button onClick={onClose} style={{ flex: 1, padding: 12, background: '#333', border: 'none', borderRadius: 8, color: 'white' }}>Cancel</button>
+                    <button onClick={onClose} style={{ flex: 1, padding: 12, background: 'var(--nav-pill-bg)', border: 'none', borderRadius: 8, color: 'var(--text-main)' }}>Cancel</button>
                     <button onClick={onConfirm} style={{ flex: 1, padding: 12, background: '#ef4444', border: 'none', borderRadius: 8, color: 'white', fontWeight: 'bold' }}>Yes, Delete</button>
                 </div>
             </motion.div>
@@ -310,9 +321,7 @@ function DeleteModal({ onClose, onConfirm }) {
     )
 }
 
-const inputStyle = { background: '#333', border: '1px solid #444', padding: 12, borderRadius: 8, color: 'white' };
-
-function SupportForm() {
+const SupportForm = () => {
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState('');
@@ -347,7 +356,7 @@ function SupportForm() {
                 value={subject}
                 onChange={e => setSubject(e.target.value)}
                 required
-                style={{ background: '#333', border: '1px solid #444', padding: 10, borderRadius: 8, color: 'white' }}
+                className={styles.input}
             />
             <textarea
                 placeholder="Describe your issue..."
@@ -355,7 +364,8 @@ function SupportForm() {
                 onChange={e => setMessage(e.target.value)}
                 rows={4}
                 required
-                style={{ background: '#333', border: '1px solid #444', padding: 10, borderRadius: 8, color: 'white', fontFamily: 'inherit' }}
+                className={styles.input}
+                style={{ fontFamily: 'inherit' }}
             />
             <button
                 disabled={status === 'submitting'}
@@ -366,7 +376,7 @@ function SupportForm() {
             {status === 'error' && <p style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to submit ticket.</p>}
         </form>
     );
-}
+};
 
 function ToggleItem({ label, desc, isActive, onToggle }) {
     return (
@@ -380,6 +390,53 @@ function ToggleItem({ label, desc, isActive, onToggle }) {
                 onClick={onToggle}
             >
                 <div className={styles.toggleKnob} />
+            </div>
+        </div>
+    );
+}
+
+function ThemeToggle() {
+    const { theme, toggleTheme } = useTheme();
+
+    return (
+        <div className={styles.settingItem}>
+            <div className={styles.settingInfo}>
+                <h4>Theme</h4>
+                <p>Select your interface appearance</p>
+            </div>
+            <div className={styles.themeToggleContainer}>
+                <button
+                    onClick={() => toggleTheme('light')}
+                    style={{
+                        padding: '6px 14px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: theme === 'light' ? 'var(--surface)' : 'transparent',
+                        color: theme === 'light' ? 'var(--text-main)' : 'var(--text-muted)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        boxShadow: theme === 'light' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                >
+                    Light
+                </button>
+                <button
+                    onClick={() => toggleTheme('dark')}
+                    style={{
+                        padding: '6px 14px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: theme === 'dark' ? 'var(--surface)' : 'transparent',
+                        color: theme === 'dark' ? 'var(--text-main)' : 'var(--text-muted)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        boxShadow: theme === 'dark' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                >
+                    Dark
+                </button>
             </div>
         </div>
     );

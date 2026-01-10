@@ -4,12 +4,15 @@
   --surface: #1a1a1a;
   --surface-glass: rgba(26, 26, 26, 0.8);
 
-  --primary: #8a2be2;
-  /* BlueViolet */
-  --primary-gradient: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
-  --secondary: #00d4ff;
-  /* Cyan */
-  --secondary-gradient: linear-gradient(135deg, #00d4ff 0%, #005f73 100%);
+  --primary: #3b82f6;
+  /* Blue */
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #d946ef 100%);
+  /* Blue -> Pink */
+
+  --secondary: #ec4899;
+  /* Pink */
+  --secondary-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  /* Pink -> Purple */
 
   --text-main: #ffffff;
   --text-muted: #a0a0a0;
@@ -36,6 +39,42 @@
   /* Animations */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.3s ease;
+
+  /* Semantic UI Variables (Default Dark) */
+  /* Matching the Header Theme: Blue-Pink Gradient Tint */
+  --card-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(236, 72, 153, 0.1));
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-hover-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(236, 72, 153, 0.15));
+  --heading-gradient: linear-gradient(to right, #fff, #a5b4fc);
+  --icon-bg: rgba(255, 255, 255, 0.1);
+  --nav-pill-bg: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='light'] {
+  --background: #f0f4f8;
+  /* Softer Cloud White */
+  --surface: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.9);
+
+  --text-main: #1e293b;
+  /* Slate 800 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  /* Light Mode Semantic Overrides */
+  /* Matching the Floating Header Theme for consistency: Blue-Pink Gradient Tint */
+  --card-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(236, 72, 153, 0.15));
+  --card-border: rgba(59, 130, 246, 0.2);
+  --card-hover-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(236, 72, 153, 0.2));
+
+  --heading-gradient: linear-gradient(to right, #2563eb, #7c3aed);
+  /* Stronger Blue to Purple */
+  --icon-bg: rgba(255, 255, 255, 0.9);
+  /* White glossy icon bg */
+  --nav-pill-bg: rgba(0, 0, 0, 0.05);
+
+  /* Adjust gradients for light mode visibility if needed, or keep vibrant branding */
+  /* Keeping primary/secondary gradients same as they pop on white too */
 }
 
 * {

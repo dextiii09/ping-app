@@ -136,30 +136,34 @@ export default function AdminPage() {
 
 
     return (
-        <div className={styles.dashboardContainer} style={{ minHeight: '100vh', background: '#09090b' }}>
+        <div className={styles.dashboardContainer} style={{ minHeight: '100vh' }}>
             {/* Header */}
-            <div style={{ padding: '2rem 2rem 0', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Header */}
+            <motion.header
+                className={styles.floatingHeader}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(to right, #ec4899, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <Icons.Shield /> Admin Portal
+                    <h1 style={{ fontSize: '1.5rem', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span className="gradient-text"><Icons.Shield /> Admin Portal</span>
                     </h1>
-                    <p style={{ color: '#aaa', marginTop: 5 }}>Control center for moderation and support.</p>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>Control center for moderation.</p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', maxWidth: '600px', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '1rem', flex: 1 }}>
-                        <StatCard label="Total Users" value={stats.users} color="#3b82f6" />
-                        <StatCard label="Pending" value={stats.reports} color="#ef4444" />
-                        <StatCard label="Tickets" value={stats.tickets} color="#eab308" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <StatCard label="Users" value={stats.users} color="#3b82f6" compact />
+                        <StatCard label="Pending" value={stats.reports} color="#ef4444" compact />
                     </div>
-                    <button onClick={handleLogout} style={{ padding: '10px 20px', background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7', borderRadius: 8, cursor: 'pointer', fontWeight: 600, height: 'fit-content' }}>
+                    <button onClick={handleLogout} style={{ padding: '8px 16px', background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
                         Logout
                     </button>
                 </div>
-            </div>
+            </motion.header>
 
             {/* Tabs */}
-            <div style={{ padding: '0 2rem', marginTop: '2rem', borderBottom: '1px solid #27272a', display: 'flex', gap: 30, overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+            <div style={{ padding: '0 2rem', marginTop: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 30, overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100%', scrollbarWidth: 'none' }}>
                 <TabBtn label="User Management" icon={<Icons.Users />} active={activeTab === 'users'} onClick={() => setActiveTab('users')} />
                 <TabBtn label="Reports & Safety" icon={<Icons.Reports />} count={stats.reports} active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
                 <TabBtn label="Support Tickets" icon={<Icons.Support />} count={stats.tickets} active={activeTab === 'support'} onClick={() => setActiveTab('support')} />
@@ -182,10 +186,15 @@ export default function AdminPage() {
                                 </THead>
                                 <tbody>
                                     {users.map(user => (
-                                        <tr key={user.id} style={{ borderBottom: '1px solid #27272a' }}>
+                                        <tr key={user.id} className={styles.tableRow} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }}>
                                             <Td>
-                                                <div style={{ fontWeight: 'bold' }}>{user.name}</div>
-                                                <div style={{ fontSize: '0.8rem', color: '#666' }}>{user.email}</div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                                    <Avatar seed={user.email} />
+                                                    <div>
+                                                        <div style={{ fontWeight: 600, color: '#f4f4f5' }}>{user.name}</div>
+                                                        <div style={{ fontSize: '0.8rem', color: '#71717a' }}>{user.email}</div>
+                                                    </div>
+                                                </div>
                                             </Td>
                                             <Td>
                                                 <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
@@ -197,14 +206,14 @@ export default function AdminPage() {
                                                 {user.verificationDocs ? (
                                                     <button
                                                         onClick={() => alert(`Docs: ${user.verificationDocs}`)}
-                                                        style={{ fontSize: '0.8rem', color: '#aaa', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
+                                                        style={{ fontSize: '0.8rem', color: '#a1a1aa', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
                                                     >
-                                                        View Docs 📄
+                                                        📄 View Docs
                                                     </button>
-                                                ) : <span style={{ color: '#444' }}>-</span>}
+                                                ) : <span style={{ color: '#444', fontSize: '0.8rem' }}>-</span>}
                                             </Td>
                                             <Td align="right">
-                                                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                                                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                                                     <ActionBtn onClick={() => setSelectedUser(user)}>Profile</ActionBtn>
                                                     <ActionBtn onClick={() => loadUserChats(user)}>Chats</ActionBtn>
                                                     <ActionBtn
@@ -307,15 +316,78 @@ export default function AdminPage() {
             {/* --- MODALS (Reused from previous code with improved styling) --- */}
 
             {/* User Profile Modal */}
+            {/* User Profile Modal */}
             {selectedUser && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} style={{ background: '#1c1c1e', padding: 30, borderRadius: 16, width: '90%', maxWidth: 500, border: '1px solid #333' }}>
-                        <h2 style={{ marginTop: 0 }}>{selectedUser.name}</h2>
-                        {/* ... (Keep existing profile display logic but styled better) ... */}
-                        <pre style={{ background: '#111', padding: 10, borderRadius: 8, overflow: 'auto', maxHeight: 300, fontSize: '0.8rem', color: '#aaa' }}>
-                            {JSON.stringify(selectedUser, null, 2)}
-                        </pre>
-                        <button onClick={() => setSelectedUser(null)} style={{ marginTop: 20, width: '100%', padding: 12, borderRadius: 8, background: '#333', border: 'none', color: 'white', cursor: 'pointer' }}>Close</button>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)' }}>
+                    <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        style={{ background: '#18181b', padding: 0, borderRadius: 24, width: '90%', maxWidth: 500, border: '1px solid #333', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
+                    >
+                        {/* Modal Header */}
+                        <div style={{ padding: '24px', background: 'linear-gradient(to right, #27272a, #18181b)', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>{selectedUser.name}</h2>
+                                <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
+                                    <span style={{ fontSize: '0.85rem', color: '#a1a1aa' }}>{selectedUser.email}</span>
+                                    <Badge color={selectedUser.role === 'BUSINESS' ? 'blue' : 'pink'}>{selectedUser.role}</Badge>
+                                </div>
+                            </div>
+                            <button onClick={() => setSelectedUser(null)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '1.5rem' }}>&times;</button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div style={{ padding: '24px', maxHeight: '60vh', overflowY: 'auto' }}>
+                            <div style={{ display: 'grid', gap: '20px' }}>
+
+                                {/* Common Info */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                    <InfoField label="Joined" value={new Date(selectedUser.joined).toLocaleDateString()} />
+                                    <InfoField label="Status" value={selectedUser.isVerified ? 'Verified Account' : 'Unverified'} />
+                                </div>
+
+                                <hr style={{ borderColor: '#333', margin: '5px 0' }} />
+
+                                {/* Role Specific Info */}
+                                {selectedUser.role === 'INFLUENCER' ? (
+                                    <>
+                                        <InfoField label="Bio" value={selectedUser.profile?.bio} fullWidth />
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                            <InfoField label="Niche" value={selectedUser.profile?.niche} />
+                                            <InfoField label="Instagram" value={selectedUser.profile?.instagramHandle} />
+                                            <InfoField label="Followers" value={selectedUser.profile?.followersCount} />
+                                            <InfoField label="Price / Post" value={selectedUser.profile?.pricePerPost ? `$${selectedUser.profile.pricePerPost}` : null} />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <InfoField label="Company Name" value={selectedUser.profile?.companyName} />
+                                        <InfoField label="Website" value={selectedUser.profile?.website} />
+                                        <InfoField label="Industry" value={selectedUser.profile?.industry} />
+                                        <InfoField label="Budget" value={selectedUser.profile?.budget} />
+                                        <InfoField label="Description" value={selectedUser.profile?.description} fullWidth />
+                                    </>
+                                )}
+
+                                {/* Verification Docs */}
+                                {selectedUser.verificationDocs && (
+                                    <div style={{ marginTop: 10, padding: 15, background: '#27272a', borderRadius: 12 }}>
+                                        <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: 5 }}>Verification Documents</div>
+                                        <code style={{ display: 'block', wordBreak: 'break-all', color: '#60a5fa', fontSize: '0.9rem' }}>
+                                            {selectedUser.verificationDocs}
+                                        </code>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{ padding: '20px 24px', borderTop: '1px solid #333', background: '#1c1c1e', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                            <button onClick={() => setSelectedUser(null)} style={{ padding: '10px 20px', borderRadius: 8, background: 'transparent', border: '1px solid #444', color: '#ccc', cursor: 'pointer' }}>Close</button>
+                            <button onClick={() => { toggleVerification(selectedUser.id, selectedUser.isVerified); setSelectedUser(null); }} style={{ padding: '10px 20px', borderRadius: 8, background: selectedUser.isVerified ? '#ef4444' : '#22c55e', border: 'none', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+                                {selectedUser.isVerified ? 'Revoke Verification' : 'Approve & Verify'}
+                            </button>
+                        </div>
                     </motion.div>
                 </div>
             )}
@@ -360,10 +432,15 @@ export default function AdminPage() {
 
 // === COMPONENT HELPERS ===
 
-const StatCard = ({ label, value, color }) => (
-    <div style={{ background: '#18181b', padding: '15px 25px', borderRadius: 12, border: '1px solid #27272a', minWidth: 150 }}>
-        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: color }}>{value}</div>
-        <div style={{ color: '#888', fontSize: '0.9rem' }}>{label}</div>
+const StatCard = ({ label, value, color, compact }) => (
+    <div className={`${styles.statCard} ${compact ? styles.statCardCompact : ''}`}>
+        <div
+            className={styles.statValue}
+            style={{ color: color }} // Keep dynamic color for value
+        >
+            {value}
+        </div>
+        <div className={styles.statLabel}>{label}</div>
     </div>
 );
 
@@ -375,25 +452,48 @@ const TabBtn = ({ label, icon, active, onClick, count }) => (
 );
 
 const Table = ({ children }) => (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', color: '#e4e4e7', minWidth: '600px' }}>{children}</table>
+    <div style={{ width: '100%', overflowX: 'auto', background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 16, padding: '0.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0', color: '#e4e4e7', minWidth: '600px' }}>{children}</table>
     </div>
 );
-const THead = ({ children }) => <thead style={{ borderBottom: '1px solid #27272a', color: '#a1a1aa', fontSize: '0.9rem', textAlign: 'left' }}>{children}</thead>;
+const THead = ({ children }) => <thead style={{ color: '#a1a1aa', fontSize: '0.8rem', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{children}</thead>;
 const Th = ({ children, align = 'left' }) => <th style={{ padding: '15px 10px', fontWeight: 'normal', textAlign: align }}>{children}</th>;
 const Td = ({ children, align = 'left' }) => <td style={{ padding: '15px 10px', textAlign: align }}>{children}</td>;
 
 const Badge = ({ children, color }) => {
     const colors = {
-        blue: { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa' },
-        pink: { bg: 'rgba(236, 72, 153, 0.15)', text: '#f472b6' },
-        green: { bg: 'rgba(34, 197, 94, 0.15)', text: '#4ade80' },
-        red: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171' },
-        gray: { bg: 'rgba(113, 113, 122, 0.15)', text: '#a1a1aa' },
+        blue: { bg: 'rgba(59, 130, 246, 0.1)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.2)' },
+        pink: { bg: 'rgba(236, 72, 153, 0.1)', text: '#f472b6', border: 'rgba(236, 72, 153, 0.2)' },
+        green: { bg: 'rgba(34, 197, 94, 0.1)', text: '#4ade80', border: 'rgba(34, 197, 94, 0.2)' },
+        red: { bg: 'rgba(239, 68, 68, 0.1)', text: '#f87171', border: 'rgba(239, 68, 68, 0.2)' },
+        gray: { bg: 'rgba(113, 113, 122, 0.1)', text: '#a1a1aa', border: 'rgba(113, 113, 122, 0.2)' },
     };
     const c = colors[color] || colors.gray;
-    return <span style={{ background: c.bg, color: c.text, padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 600 }}>{children}</span>;
+    return (
+        <span style={{
+            background: c.bg,
+            color: c.text,
+            border: `1px solid ${c.border}`,
+            padding: '4px 10px',
+            borderRadius: 20,
+            fontSize: '0.7rem',
+            fontWeight: 600,
+            boxShadow: `0 0 10px ${c.bg}`
+        }}>
+            {children}
+        </span>
+    );
 };
+
+const Avatar = ({ seed }) => (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: '#27272a', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
+        <img
+            src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+            alt="avatar"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+    </div>
+);
 
 const StatusBadge = ({ status }) => {
     let color = 'gray';
@@ -423,4 +523,13 @@ const ActionBtn = ({ children, onClick, danger, success }) => (
     >
         {children}
     </button>
+);
+
+const InfoField = ({ label, value, fullWidth }) => (
+    <div style={{ gridColumn: fullWidth ? 'span 2' : 'span 1' }}>
+        <div style={{ fontSize: '0.75rem', color: '#71717a', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</div>
+        <div style={{ fontSize: '0.95rem', color: '#e4e4e7', wordBreak: 'break-word', lineHeight: '1.4' }}>
+            {value || <span style={{ color: '#444', fontStyle: 'italic' }}>Not provided</span>}
+        </div>
+    </div>
 );
