@@ -6,7 +6,7 @@ export default function DashboardLayout({ children }) {
         <SubscriptionProvider>
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 {/* Layout Header Removed to allow individual page customizations */}
-                <main style={{ flex: 1, padding: '2rem' }}>
+                <main style={{ flex: 1, position: 'relative' }}>
                     {children}
                 </main>
             </div>
