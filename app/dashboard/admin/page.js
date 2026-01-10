@@ -174,61 +174,106 @@ export default function AdminPage() {
                 <AnimatePresence mode="wait">
                     {activeTab === 'users' && (
                         <motion.div key="users" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                            <Table>
-                                <THead>
-                                    <tr>
-                                        <Th>User</Th>
-                                        <Th>Role</Th>
-                                        <Th>Status</Th>
-                                        <Th>Verification</Th>
-                                        <Th align="right">Actions</Th>
-                                    </tr>
-                                </THead>
-                                <tbody>
-                                    {users.map(user => (
-                                        <tr key={user.id} className={styles.tableRow} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }}>
-                                            <Td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                                    <Avatar seed={user.email} />
-                                                    <div>
-                                                        <div style={{ fontWeight: 600, color: '#f4f4f5' }}>{user.name}</div>
-                                                        <div style={{ fontSize: '0.8rem', color: '#71717a' }}>{user.email}</div>
-                                                    </div>
-                                                </div>
-                                            </Td>
-                                            <Td>
-                                                <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
-                                            </Td>
-                                            <Td>
-                                                <Badge color={user.isVerified ? 'green' : 'gray'}>{user.isVerified ? 'Verified' : 'Unverified'}</Badge>
-                                            </Td>
-                                            <Td>
-                                                {user.verificationDocs ? (
-                                                    <button
-                                                        onClick={() => alert(`Docs: ${user.verificationDocs}`)}
-                                                        style={{ fontSize: '0.8rem', color: '#a1a1aa', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                                                    >
-                                                        📄 View Docs
-                                                    </button>
-                                                ) : <span style={{ color: '#444', fontSize: '0.8rem' }}>-</span>}
-                                            </Td>
-                                            <Td align="right">
-                                                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                                                    <ActionBtn onClick={() => setSelectedUser(user)}>Profile</ActionBtn>
-                                                    <ActionBtn onClick={() => loadUserChats(user)}>Chats</ActionBtn>
-                                                    <ActionBtn
-                                                        danger={user.isVerified}
-                                                        success={!user.isVerified}
-                                                        onClick={() => toggleVerification(user.id, user.isVerified)}
-                                                    >
-                                                        {user.isVerified ? 'Revoke' : 'Verify'}
-                                                    </ActionBtn>
-                                                </div>
-                                            </Td>
+                            {/* Desktop Table View */}
+                            <div className={styles.desktopView}>
+                                <Table>
+                                    <THead>
+                                        <tr>
+                                            <Th>User</Th>
+                                            <Th>Role</Th>
+                                            <Th>Status</Th>
+                                            <Th>Verification</Th>
+                                            <Th align="right">Actions</Th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
+                                    </THead>
+                                    <tbody>
+                                        {users.map(user => (
+                                            <tr key={user.id} className={styles.tableRow} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }}>
+                                                <Td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                                        <Avatar seed={user.email} />
+                                                        <div>
+                                                            <div style={{ fontWeight: 600, color: '#f4f4f5' }}>{user.name}</div>
+                                                            <div style={{ fontSize: '0.8rem', color: '#71717a' }}>{user.email}</div>
+                                                        </div>
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
+                                                </Td>
+                                                <Td>
+                                                    <Badge color={user.isVerified ? 'green' : 'gray'}>{user.isVerified ? 'Verified' : 'Unverified'}</Badge>
+                                                </Td>
+                                                <Td>
+                                                    {user.verificationDocs ? (
+                                                        <button
+                                                            onClick={() => alert(`Docs: ${user.verificationDocs}`)}
+                                                            style={{ fontSize: '0.8rem', color: '#a1a1aa', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                                                        >
+                                                            📄 View Docs
+                                                        </button>
+                                                    ) : <span style={{ color: '#444', fontSize: '0.8rem' }}>-</span>}
+                                                </Td>
+                                                <Td align="right">
+                                                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                                                        <ActionBtn onClick={() => setSelectedUser(user)}>Profile</ActionBtn>
+                                                        <ActionBtn onClick={() => loadUserChats(user)}>Chats</ActionBtn>
+                                                        <ActionBtn
+                                                            danger={user.isVerified}
+                                                            success={!user.isVerified}
+                                                            onClick={() => toggleVerification(user.id, user.isVerified)}
+                                                        >
+                                                            {user.isVerified ? 'Revoke' : 'Verify'}
+                                                        </ActionBtn>
+                                                    </div>
+                                                </Td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </div>
+
+                            {/* Mobile Card View */}
+                            <div className={styles.mobileView}>
+                                {users.map(user => (
+                                    <div key={user.id} className={styles.mobileCard}>
+                                        <div className={styles.mobileCardHeader}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                <Avatar seed={user.email} />
+                                                <div>
+                                                    <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1rem' }}>{user.name}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
+                                                </div>
+                                            </div>
+                                            <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
+                                        </div>
+
+                                        <div className={styles.mobileCardRow}>
+                                            <span>Status</span>
+                                            <Badge color={user.isVerified ? 'green' : 'gray'}>{user.isVerified ? 'Verified' : 'Unverified'}</Badge>
+                                        </div>
+
+                                        {user.verificationDocs && (
+                                            <div className={styles.mobileCardRow}>
+                                                <span>Docs</span>
+                                                <button onClick={() => alert(user.verificationDocs)} style={{ background: 'none', border: 'none', color: '#60a5fa', fontSize: '0.85rem' }}>View Docs ↗</button>
+                                            </div>
+                                        )}
+
+                                        <div className={styles.mobileActions} style={{ paddingTop: 10, borderTop: '1px solid var(--card-border)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+                                            <ActionBtn onClick={() => setSelectedUser(user)}>Profile</ActionBtn>
+                                            <ActionBtn onClick={() => loadUserChats(user)}>Chats</ActionBtn>
+                                            <ActionBtn
+                                                danger={user.isVerified}
+                                                success={!user.isVerified}
+                                                onClick={() => toggleVerification(user.id, user.isVerified)}
+                                            >
+                                                {user.isVerified ? 'Revoke' : 'Verify'}
+                                            </ActionBtn>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </motion.div>
                     )}
 

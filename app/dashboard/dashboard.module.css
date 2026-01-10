@@ -1952,3 +1952,21 @@
     color: #ef4444;
     border-color: #ef4444;
 }
+
+/* === MOBILE ADMIN OVERRIDES === */
+@media (max-width: 768px) {
+    .dashboardContainer { padding: 1rem; }
+    .floatingHeader { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .desktopView { display: none !important; }
+    .mobileView { display: grid; gap: 1rem; }
+    .mobileCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 10px; }
+    .mobileCardHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+    .mobileCardRow { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-muted); }
+    .mobileActions { display: flex; gap: 8px; margin-top: 10px; }
+    .statCard { flex: 1; min-width: 0; }
+}
+
+@media (min-width: 769px) {
+    .mobileView { display: none !important; }
+    .desktopView { display: block; }
+}
