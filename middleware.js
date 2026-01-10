@@ -18,7 +18,7 @@ export async function middleware(request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         try {
-            const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+            const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
             await jwtVerify(token, secret);
             return NextResponse.next();
         } catch (err) {
@@ -32,7 +32,7 @@ export async function middleware(request) {
         const token = request.cookies.get('auth_token')?.value;
         if (token && (pathname === '/login' || pathname === '/register' || pathname === '/')) {
             try {
-                const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+                const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
                 const { payload } = await jwtVerify(token, secret);
 
                 // Redirect based on role
@@ -59,7 +59,7 @@ export async function middleware(request) {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
         await jwtVerify(token, secret);
         return NextResponse.next();
     } catch (err) {

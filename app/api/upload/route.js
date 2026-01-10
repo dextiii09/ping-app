@@ -10,7 +10,7 @@ export async function POST(request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
         await jwtVerify(token, secret);
 
         // 2. Process File

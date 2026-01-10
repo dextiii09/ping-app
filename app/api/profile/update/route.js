@@ -13,7 +13,7 @@ export async function PUT(request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
         const { payload } = await jwtVerify(token.value, secret);
         const userId = payload.userId;
 
