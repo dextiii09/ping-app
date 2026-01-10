@@ -1955,18 +1955,103 @@
 
 /* === MOBILE ADMIN OVERRIDES === */
 @media (max-width: 768px) {
-    .dashboardContainer { padding: 1rem; }
-    .floatingHeader { flex-direction: column; align-items: stretch; gap: 1rem; }
-    .desktopView { display: none !important; }
-    .mobileView { display: grid; gap: 1rem; }
-    .mobileCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 10px; }
-    .mobileCardHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-    .mobileCardRow { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-muted); }
-    .mobileActions { display: flex; gap: 8px; margin-top: 10px; }
-    .statCard { flex: 1; min-width: 0; }
+    .dashboardContainer {
+        padding: 0.5rem;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .floatingHeader {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 16px;
+        padding: 1rem;
+    }
+
+    .desktopView {
+        display: none !important;
+    }
+
+    .mobileView {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .mobileCard {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        /* Critical for fit */
+    }
+
+    .mobileCardHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 5px;
+        gap: 10px;
+        /* Prevent badge overlap */
+    }
+
+    .mobileCardRow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .mobileActions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--card-border);
+        flex-wrap: wrap;
+        /* Allow wrapping securely */
+    }
+
+    .actionBtn {
+        flex: 1;
+        /* Distribute space */
+        min-width: 80px;
+        /* Ensure clickability */
+        padding: 8px 4px;
+        font-size: 0.8rem;
+    }
+
+    .statCard {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Fix header actions layout */
+    .headerActions {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Ensure no body background border issues */
+    body {
+        background-color: #000;
+    }
 }
 
 @media (min-width: 769px) {
-    .mobileView { display: none !important; }
-    .desktopView { display: block; }
+    .mobileView {
+        display: none !important;
+    }
+
+    .desktopView {
+        display: block;
+    }
 }

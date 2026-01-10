@@ -238,14 +238,16 @@ export default function AdminPage() {
                                 {users.map(user => (
                                     <div key={user.id} className={styles.mobileCard}>
                                         <div className={styles.mobileCardHeader}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, overflow: 'hidden' }}>
                                                 <Avatar seed={user.email} />
-                                                <div>
-                                                    <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1rem' }}>{user.name}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
+                                                <div style={{ minWidth: 0 }}>
+                                                    <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.name}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
                                                 </div>
                                             </div>
-                                            <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
+                                            <div style={{ flexShrink: 0 }}>
+                                                <Badge color={user.role === 'BUSINESS' ? 'blue' : 'pink'}>{user.role}</Badge>
+                                            </div>
                                         </div>
 
                                         <div className={styles.mobileCardRow}>
