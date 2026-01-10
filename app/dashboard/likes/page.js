@@ -10,15 +10,25 @@ export default function LikesPage() {
     const { hasAccess } = useSubscription();
     const canSeeLikes = hasAccess('gold');
 
-    // Mock Data for Likes
-    const likes = [
-        { id: 1, name: "Zara Clothing", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Zara", time: "2h ago", verified: true },
-        { id: 2, name: "TechGear", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Tech", time: "5h ago", verified: false },
-        { id: 3, name: "Urban Kicks", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Urban", time: "1d ago", verified: true },
-        { id: 4, name: "Glow Cosmetics", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Glow", time: "1d ago", verified: false },
-        { id: 5, name: "FitLife Pro", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Fit", time: "2d ago", verified: true },
-        { id: 6, name: "Travel Buddy", type: "Brand", image: "https://api.dicebear.com/7.x/initials/svg?seed=Travel", time: "3d ago", verified: false },
-    ];
+    const [likes, setLikes] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        async function fetchLikes() {
+            try {
+                const res = await fetch('/api/match/likes');
+                const data = await res.json();
+                if (data.likes) {
+                    setLikes(data.likes);
+                }
+            } catch (error) {
+                console.error("Failed to fetch likes", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchLikes();
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -34,6 +44,33 @@ export default function LikesPage() {
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0 }
     };
+
+    async function handleMatchBack(profileId) {
+        if (!canSeeLikes) return;
+        try {
+            await fetch('/api/match/swipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ swipedOnId: profileId, direction: 'right' })
+            });
+            // Remove from list or show success state?
+            // For now, let's just alert or refresh. A match notification will happen via socket/polling elsewhere.
+            // Ideally we remove them from the "Likes" list because they are now a "Match".
+            setLikes(prev => prev.filter(p => p.id !== profileId));
+            // Redirect to messages/match?
+            // router.push('/dashboard/messages'); 
+        } catch (error) {
+            console.error("Match failed", error);
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className={styles.dashboardContainer} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+                <div style={{ color: 'var(--text-muted)' }}>Loading likes...</div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.dashboardContainer}>
@@ -56,96 +93,109 @@ export default function LikesPage() {
                 </div>
             </header>
 
-            <motion.div
-                className={styles.likesGrid}
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-            >
-                {likes.map((profile, i) => (
-                    <motion.div
-                        key={profile.id}
-                        className={styles.likeCard}
-                        variants={itemVariants}
-                        whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
-                        style={{ position: 'relative', overflow: 'hidden' }}
-                        onClick={() => !canSeeLikes && router.push('/dashboard/premiums')}
-                    >
-                        {/* Blur Filter Overlay if not premium */}
-                        {!canSeeLikes && (
-                            <div style={{
-                                position: 'absolute',
-                                inset: 0,
-                                zIndex: 10,
-                                background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(251, 191, 36, 0.1) 100%)',
-                                backdropFilter: 'blur(15px)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                border: '1px solid rgba(251, 191, 36, 0.3)'
-                            }}>
+            {likes.length === 0 ? (
+                <div style={{ textAlign: 'center', marginTop: '10vh', color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍃</div>
+                    <h3>No likes yet</h3>
+                    <p>Optimizing your profile can help you get more visibility!</p>
+                </div>
+            ) : (
+                <motion.div
+                    className={styles.likesGrid}
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                >
+                    {likes.map((profile) => (
+                        <motion.div
+                            key={profile.id}
+                            className={styles.likeCard}
+                            variants={itemVariants}
+                            whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                            style={{ position: 'relative', overflow: 'hidden' }}
+                            onClick={() => !canSeeLikes && router.push('/dashboard/premiums')}
+                        >
+                            {/* Blur Filter Overlay if not premium */}
+                            {!canSeeLikes && (
                                 <div style={{
-                                    background: 'rgba(0,0,0,0.6)',
-                                    borderRadius: '50%',
-                                    width: '60px',
-                                    height: '60px',
+                                    position: 'absolute',
+                                    inset: 0,
+                                    zIndex: 10,
+                                    background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(251, 191, 36, 0.1) 100%)',
+                                    backdropFilter: 'blur(15px)',
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    marginBottom: '10px',
-                                    border: '1px solid #fbbf24',
-                                    boxShadow: '0 0 15px rgba(251, 191, 36, 0.3)'
+                                    cursor: 'pointer',
+                                    border: '1px solid rgba(251, 191, 36, 0.3)'
                                 }}>
-                                    <span style={{ fontSize: '2rem' }}>🔒</span>
+                                    <div style={{
+                                        background: 'rgba(0,0,0,0.6)',
+                                        borderRadius: '50%',
+                                        width: '60px',
+                                        height: '60px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '10px',
+                                        border: '1px solid #fbbf24',
+                                        boxShadow: '0 0 15px rgba(251, 191, 36, 0.3)'
+                                    }}>
+                                        <span style={{ fontSize: '2rem' }}>🔒</span>
+                                    </div>
+                                    <span style={{
+                                        fontWeight: '800',
+                                        textTransform: 'uppercase',
+                                        fontSize: '0.9rem',
+                                        color: '#fbbf24',
+                                        letterSpacing: '1px',
+                                        textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                                    }}>
+                                        Upgrade to See
+                                    </span>
                                 </div>
-                                <span style={{
-                                    fontWeight: '800',
-                                    textTransform: 'uppercase',
-                                    fontSize: '0.9rem',
-                                    color: '#fbbf24',
-                                    letterSpacing: '1px',
-                                    textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-                                }}>
-                                    Upgrade to See
-                                </span>
+                            )}
+
+                            <div className={styles.timeBadge}>{profile.time}</div>
+
+                            <div
+                                className={styles.likeAvatar}
+                                style={{
+                                    backgroundImage: `url(${profile.image})`,
+                                    filter: canSeeLikes ? 'none' : 'blur(5px)' // Extra blur on image
+                                }}
+                            ></div>
+
+                            <div className={styles.likeInfo}>
+                                <h3 className={styles.likeName}>
+                                    {canSeeLikes ? profile.name : 'Unknown Brand'}
+                                    {profile.verified && <span className={styles.verifiedIconSmall}>✓</span>}
+                                </h3>
+                                <p className={styles.likeType}>{profile.type}</p>
                             </div>
-                        )}
 
-                        <div className={styles.timeBadge}>{profile.time}</div>
-
-                        <div
-                            className={styles.likeAvatar}
-                            style={{
-                                backgroundImage: `url(${profile.image})`,
-                                filter: canSeeLikes ? 'none' : 'blur(5px)' // Extra blur on image
-                            }}
-                        ></div>
-
-                        <div className={styles.likeInfo}>
-                            <h3 className={styles.likeName}>
-                                {canSeeLikes ? profile.name : 'Unknown Brand'}
-                                {profile.verified && <span className={styles.verifiedIconSmall}>✓</span>}
-                            </h3>
-                            <p className={styles.likeType}>{profile.type}</p>
-                        </div>
-
-                        <button
-                            className={styles.matchBtn}
-                            style={{
-                                background: canSeeLikes ? 'linear-gradient(90deg, #ec4899, #8b5cf6)' : '#333',
-                                color: canSeeLikes ? 'white' : '#666',
-                            }}
-                        >
-                            {canSeeLikes ? 'Match Now' : 'Locked'}
-                        </button>
-                    </motion.div>
-                ))}
-            </motion.div>
+                            <button
+                                className={styles.matchBtn}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMatchBack(profile.id);
+                                }}
+                                style={{
+                                    background: canSeeLikes ? 'linear-gradient(90deg, #ec4899, #8b5cf6)' : '#333',
+                                    color: canSeeLikes ? 'white' : '#666',
+                                    cursor: canSeeLikes ? 'pointer' : 'default'
+                                }}
+                            >
+                                {canSeeLikes ? 'Match Now' : 'Locked'}
+                            </button>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            )}
 
             {/* Upsell Banner (Only show if not Gold) */}
-            {!canSeeLikes && (
+            {!canSeeLikes && likes.length > 0 && (
                 <motion.div
                     className={styles.upsellBanner}
                     initial={{ opacity: 0, y: 20 }}
