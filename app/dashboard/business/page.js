@@ -40,6 +40,7 @@ export default function BusinessHome() {
     const [greeting, setGreeting] = useState('Hello');
     const [showNotifications, setShowNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     // Verification State
     const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -81,41 +82,99 @@ export default function BusinessHome() {
         return () => clearInterval(interval);
     }, []);
 
+    const handleScroll = (e) => {
+        const scrollLeft = e.target.scrollLeft;
+        const cardWidth = e.target.offsetWidth;
+        const index = Math.round(scrollLeft / cardWidth);
+        setActiveIndex(index);
+    };
+
+    const CARDS = [
+        {
+            title: "Find Creators",
+            desc: "Discover top-tier talent for your next campaign.",
+            link: "/dashboard/matching?type=creator",
+            icon: <SearchIcon />
+        },
+        {
+            title: "Messages",
+            desc: "Chat with creators and negotiate terms.",
+            link: "/dashboard/messages",
+            icon: <ChatIcon />
+        },
+        {
+            title: "Analytics",
+            desc: "Track views, likes, and campaign performance.",
+            link: "/dashboard/analytics",
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+            )
+        },
+        {
+            title: "Business Profile",
+            desc: "Update your business details and requirements.",
+            link: "/dashboard/business/profile",
+            icon: <EditIcon />
+        },
+        {
+            title: "Premiums",
+            desc: "Unlock exclusive business tools and insights.",
+            link: "/dashboard/premiums",
+            icon: <PremiumIcon />
+        },
+        {
+            title: "Verification",
+            desc: "Upload proofs to get the Green Tick.",
+            action: () => setShowVerificationModal(true),
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            )
+        },
+    ];
+
     return (
         <div className={styles.dashboardContainer}>
-            {/* PARALLAX HEADER */}
+            {/* STICKY HEADER */}
             <motion.header
                 className={styles.header}
-                style={{ y: headerY, opacity: headerOpacity }}
-                initial={{ opacity: 0, y: 30 }}
+                style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(9, 9, 11, 0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+                transition={{ duration: 0.5 }}
             >
-                <div className={styles.welcomeText}>
-                    <h1 className="gradient-text">{greeting}, Business 🚀</h1>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <p style={{ margin: 0 }}>Ready to scale your brand with top influencers?</p>
-                        <span style={{
-                            padding: '4px 12px',
-                            borderRadius: '20px',
-                            background: tier === 'free' ? 'rgba(255,255,255,0.1)' : tier === 'plus' ? '#be123c' : tier === 'gold' ? '#b45309' : '#1f2937',
-                            color: 'white',
-                            fontSize: '0.7rem',
-                            fontWeight: 'bold',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            textTransform: 'uppercase'
-                        }}>
-                            {tier} MEMBER
-                        </span>
-                    </div>
+                <div>
+                    <h1 className="gradient-text" style={{ fontSize: '1.5rem', marginBottom: '2px' }}>{greeting}, Business 🚀</h1>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>Ready to scale?</p>
                 </div>
-                <div className={styles.headerActions}>
+
+                <div className={styles.headerActions} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {/* Tier Badge */}
+                    <span style={{
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        background: tier === 'free' ? 'rgba(255,255,255,0.1)' : tier === 'plus' ? '#be123c' : tier === 'gold' ? '#b45309' : '#1f2937',
+                        color: 'white',
+                        fontSize: '0.65rem',
+                        fontWeight: '800',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        whiteSpace: 'nowrap',
+                        height: 'fit-content'
+                    }}>
+                        {tier} MEMBER
+                    </span>
+
                     <motion.button
                         className={styles.iconBtn}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setShowNotifications(!showNotifications)}
-                        style={{ position: 'relative' }}
+                        style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c1e', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e4e4e7' }}
                     >
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                         {unreadCount > 0 && (
@@ -135,8 +194,9 @@ export default function BusinessHome() {
                     <Link href="/dashboard/settings">
                         <motion.button
                             className={styles.iconBtn}
-                            whileHover={{ scale: 1.1, rotate: 90 }}
+                            whileHover={{ scale: 1.05, rotate: 90 }}
                             whileTap={{ scale: 0.95 }}
+                            style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c1e', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e4e4e7' }}
                         >
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -154,93 +214,49 @@ export default function BusinessHome() {
                 )}
             </AnimatePresence>
 
-            {/* PARALLAX GRID */}
+            {/* CAROUSEL (Horizontal Scroll) */}
             <motion.div
-                className={styles.grid}
+                className={styles.carousel}
                 style={{ y: gridY }}
+                onScroll={handleScroll}
             >
-                {/* Card 2: Find Creators (Kept as is, but reordered if needed, actually user just said remove others) */}
-
-                {/* Card 2: Find Creators */}
-                <ParallaxCard speed={-10}>
-                    <Link href="/dashboard/matching?type=creator" className={styles.card}>
-                        <div className={styles.cardIcon}><SearchIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Find Creators</h3>
-                            <p className={styles.cardDesc}>Discover top-tier talent for your next campaign.</p>
+                {CARDS.map((card, index) => (
+                    card.action ? (
+                        <div
+                            key={index}
+                            onClick={card.action}
+                            className={styles.carouselCard}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className={styles.cardIcon}>{card.icon}</div>
+                            <div>
+                                <h3 className={styles.cardTitle}>{card.title}</h3>
+                                <p className={styles.cardDesc}>{card.desc}</p>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
                         </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 3: Messages */}
-                <ParallaxCard speed={-30}>
-                    <Link href="/dashboard/messages" className={styles.card}>
-                        <div className={styles.cardIcon}><ChatIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Messages</h3>
-                            <p className={styles.cardDesc}>Chat with creators and negotiate terms.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 4: Analytics */}
-                <ParallaxCard speed={-20}>
-                    <Link href="/dashboard/analytics" className={styles.card}>
-                        <div className={styles.cardIcon}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Analytics</h3>
-                            <p className={styles.cardDesc}>Track views, likes, and campaign performance.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 5: Edit Profile */}
-                <ParallaxCard speed={-15}>
-                    <Link href="/dashboard/business/profile" className={styles.card}>
-                        <div className={styles.cardIcon}><EditIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Business Profile</h3>
-                            <p className={styles.cardDesc}>Update your business details and requirements.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 5: Premiums */}
-                <ParallaxCard speed={-25}>
-                    <Link href="/dashboard/premiums" className={styles.card}>
-                        <div className={styles.cardIcon}><PremiumIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Premiums</h3>
-                            <p className={styles.cardDesc}>Unlock exclusive business tools and insights.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 6: Verification Center */}
-                <ParallaxCard speed={-10}>
-                    <div className={styles.card} onClick={() => setShowVerificationModal(true)} style={{ cursor: 'pointer' }}>
-                        <div className={styles.cardIcon}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Verification</h3>
-                            <p className={styles.cardDesc}>Upload proofs to get the Green Tick.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </div>
-                </ParallaxCard>
+                    ) : (
+                        <Link href={card.link} className={styles.carouselCard} key={index}>
+                            <div className={styles.cardIcon}>{card.icon}</div>
+                            <div>
+                                <h3 className={styles.cardTitle}>{card.title}</h3>
+                                <p className={styles.cardDesc}>{card.desc}</p>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
+                        </Link>
+                    )
+                ))}
             </motion.div>
+
+            {/* Pagination Dots */}
+            <div className={styles.paginationContainer}>
+                {CARDS.map((_, index) => (
+                    <div
+                        key={index}
+                        className={`${styles.paginationDot} ${index === activeIndex ? styles.active : ''}`}
+                    />
+                ))}
+            </div>
 
             {/* Verification Modal */}
             <AnimatePresence>

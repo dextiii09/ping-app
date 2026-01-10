@@ -48,12 +48,31 @@ export default function CreatorHome() {
     const [greeting, setGreeting] = useState('Hello');
     const [showNotifications, setShowNotifications] = useState(false);
 
+    const [activeIndex, setActiveIndex] = useState(0);
+
     useEffect(() => {
         const hour = new Date().getHours();
         if (hour < 12) setGreeting('Good Morning');
         else if (hour < 18) setGreeting('Good Afternoon');
         else setGreeting('Good Evening');
     }, []);
+
+    const handleScroll = (e) => {
+        const scrollLeft = e.target.scrollLeft;
+        const cardWidth = e.target.offsetWidth;
+        // Card is now 100% width, so cardWidth is exact. + gap (1rem approx 16px)
+        // Using cardWidth is stable enough for 100% cards
+        const index = Math.round(scrollLeft / cardWidth);
+        setActiveIndex(index);
+    };
+
+    const CARDS = [
+        { title: "Discover Brands", desc: "Swipe to find your next collaboration partner.", link: "/dashboard/matching?type=brand", icon: <SearchIcon /> },
+        { title: "Who Liked Me", desc: "See brands that expressed interest in you.", link: "/dashboard/likes", icon: <HeartIcon /> },
+        { title: "Messages", desc: "Chat with brands and negotiate deals.", link: "/dashboard/messages", icon: <ChatIcon /> },
+        { title: "Edit Profile", desc: "Update your media kit and rates.", link: "/dashboard/profile", icon: <EditIcon /> },
+        { title: "Premiums", desc: "Unlock exclusive features and boost your reach.", link: "/dashboard/premiums", icon: <PremiumIcon /> },
+    ];
 
     return (
         <div className={styles.dashboardContainer}>
@@ -124,90 +143,35 @@ export default function CreatorHome() {
                 )}
             </AnimatePresence>
 
-            {/* PARALLAX GRID */}
+            {/* CAROUSEL (Horizontal Scroll) */}
             <motion.div
-                className={styles.grid}
+                className={styles.carousel}
                 style={{ y: gridY }}
+                onScroll={handleScroll}
             >
-                {/* Card 1: Discover Brands */}
-                <ParallaxCard speed={-10}>
-                    <Link href="/dashboard/matching?type=brand" className={styles.card}>
-                        <div className={styles.cardIcon}><SearchIcon /></div>
+                {CARDS.map((card, index) => (
+                    <Link href={card.link} className={styles.carouselCard} key={index}>
+                        <div className={styles.cardIcon}>{card.icon}</div>
                         <div>
-                            <h3 className={styles.cardTitle}>Discover Brands</h3>
-                            <p className={styles.cardDesc}>Swipe to find your next collaboration partner.</p>
+                            <h3 className={styles.cardTitle}>{card.title}</h3>
+                            <p className={styles.cardDesc}>{card.desc}</p>
                         </div>
                         <span className={styles.cardArrow}>→</span>
                     </Link>
-                </ParallaxCard>
-
-                {/* Card 2: Liked Me */}
-                <ParallaxCard speed={-20}>
-                    <Link href="/dashboard/likes" className={styles.card}>
-                        <div className={styles.cardIcon}><HeartIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Who Liked Me</h3>
-                            <p className={styles.cardDesc}>See brands that expressed interest in you.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 3: Chat */}
-                <ParallaxCard speed={-30}>
-                    <Link href="/dashboard/messages" className={styles.card}>
-                        <div className={styles.cardIcon}><ChatIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Messages</h3>
-                            <p className={styles.cardDesc}>Chat with brands and negotiate deals.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 4: Edit Profile */}
-                <ParallaxCard speed={-15}>
-                    <Link href="/dashboard/profile" className={styles.card}>
-                        <div className={styles.cardIcon}><EditIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Edit Profile</h3>
-                            <p className={styles.cardDesc}>Update your media kit and rates.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
-                {/* Card 5: Premiums */}
-                <ParallaxCard speed={-25}>
-                    <Link href="/dashboard/premiums" className={styles.card}>
-                        <div className={styles.cardIcon}><PremiumIcon /></div>
-                        <div>
-                            <h3 className={styles.cardTitle}>Premiums</h3>
-                            <p className={styles.cardDesc}>Unlock exclusive features and boost your reach.</p>
-                        </div>
-                        <span className={styles.cardArrow}>→</span>
-                    </Link>
-                </ParallaxCard>
-
+                ))}
             </motion.div>
+
+            {/* Pagination Dots */}
+            <div className={styles.paginationContainer}>
+                {CARDS.map((_, index) => (
+                    <div
+                        key={index}
+                        className={`${styles.paginationDot} ${index === activeIndex ? styles.active : ''}`}
+                    />
+                ))}
+            </div>
+
         </div>
-    );
-}
-
-/* 🔹 Reusable Parallax Wrapper */
-function ParallaxCard({ children, speed = -10 }) {
-    const { scrollY } = useScroll();
-    const y = useTransform(scrollY, [0, 600], [0, speed]);
-
-    return (
-        <motion.div
-            style={{ y }}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-            {children}
-        </motion.div>
     );
 }
 

@@ -39,10 +39,11 @@ export default function Login() {
                     router.push('/dashboard/matching'); // Fallback
                 }
             } else {
-                setError("Invalid Credentials");
+                setError(data.error || "Invalid Credentials");
             }
         } catch (err) {
-            setError("Login Failed");
+            console.error("Login Client Error:", err);
+            setError("Login Failed: " + (err.message || "Network Error"));
         } finally {
             setLoading(false);
         }
