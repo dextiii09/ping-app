@@ -61,6 +61,7 @@ export default function MatchingPage() {
     }, [removedIds, filters, ACTIVE_DATA]);
 
     const handleSwipe = async (direction, creator) => {
+        // OPTIMISTIC UI: Remove card immediately to prevent lag
         setRemovedIds(prev => [...prev, creator.id]);
 
         try {
@@ -331,7 +332,14 @@ const SwipeCard = ({ data, isTop, onSwipe, onOpenProfile }) => {
                 ))}
             </div>
 
-            <Image src={currentSrc} fill style={{ objectFit: 'cover', pointerEvents: 'none' }} alt={data.name} unoptimized={true} />
+            <Image
+                src={currentSrc}
+                fill
+                style={{ objectFit: 'cover', pointerEvents: 'none' }}
+                alt={data.name}
+                sizes="(max-width: 768px) 100vw, 400px"
+                priority={isTop}
+            />
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40%', background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', pointerEvents: 'none' }}></div>
 
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: 24, pointerEvents: 'none', zIndex: 15 }}>
