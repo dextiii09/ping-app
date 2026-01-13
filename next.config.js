@@ -11,10 +11,10 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
-    experimental: {
-        workerThreads: false,
-        cpus: 1,
-    },
+    // experimental: {
+    //     workerThreads: false,
+    //     cpus: 1,
+    // },
     images: {
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',
