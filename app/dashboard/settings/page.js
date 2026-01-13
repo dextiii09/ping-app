@@ -192,7 +192,6 @@ export default function SettingsPage() {
                         Appearance
                     </div>
                     <ThemeToggle />
-                    <InstallAppButton />
                 </motion.section>
 
                 {/* Account Settings */}
@@ -443,65 +442,6 @@ function ToggleItem({ label, desc, isActive, onToggle }) {
     );
 }
 
-function InstallAppButton() {
-    const [deferredPrompt, setDeferredPrompt] = useState(null);
-    const [isInstalled, setIsInstalled] = useState(false);
-
-    useEffect(() => {
-        const handler = (e) => {
-            e.preventDefault();
-            setDeferredPrompt(e);
-        };
-
-        window.addEventListener('beforeinstallprompt', handler);
-
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            setIsInstalled(true);
-        }
-
-        return () => window.removeEventListener('beforeinstallprompt', handler);
-    }, []);
-
-    const handleInstall = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            setDeferredPrompt(null);
-        }
-    };
-
-    if (!deferredPrompt && !isInstalled) return null;
-
-    return (
-        <div className={styles.settingItem}>
-            <div className={styles.settingInfo}>
-                <h4>Install App</h4>
-                <p>{isInstalled ? 'App is installed' : 'Add to Home Screen'}</p>
-            </div>
-            {!isInstalled && (
-                <button
-                    onClick={handleInstall}
-                    style={{
-                        padding: '6px 14px',
-                        borderRadius: 8,
-                        border: 'none',
-                        background: 'var(--primary)',
-                        color: 'white',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
-                    }}
-                >
-                    Install
-                </button>
-            )}
-            {isInstalled && (
-                <span style={{ color: '#22c55e', fontWeight: 'bold', fontSize: '0.9rem' }}>Installed ✓</span>
-            )}
-        </div>
-    );
-}
 
 function ThemeToggle() {
     const { theme, toggleTheme } = useTheme();
