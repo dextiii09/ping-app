@@ -125,11 +125,8 @@ export default function MatchingPage() {
     return (
         <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: 'var(--background)', color: 'var(--text-main)' }}>
 
-            {/* AMBIENT BACKGROUND */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-                <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '600px', height: '600px', background: 'var(--secondary)', filter: 'blur(150px)', opacity: 0.15, borderRadius: '50%' }}></div>
-                <div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '500px', height: '500px', background: 'var(--primary)', filter: 'blur(150px)', opacity: 0.15, borderRadius: '50%' }}></div>
-            </div>
+            {/* AMBIENT BACKGROUND - Optimized */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'radial-gradient(circle at top left, rgba(59, 130, 246, 0.15), transparent 45%), radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.15), transparent 45%)', pointerEvents: 'none' }}></div>
 
             {/* HEADER */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50 }}>
@@ -186,11 +183,11 @@ export default function MatchingPage() {
                 <div style={{
                     position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
                     display: 'flex', alignItems: 'center', gap: '16px',
-                    background: 'rgba(255, 255, 255, 0.4)', // More transparent for better blur visibility in Light Mode
-                    backdropFilter: 'blur(40px) saturate(180%)', // iOS style heavy blur
-                    WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                     padding: '12px 20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.3)',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)', zIndex: 40
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)', zIndex: 40
                 }}>
                     <DockBtn icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>} color="#eab308" onClick={handleRewind} tooltip="Rewind" />
                     <DockBtn icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>} color="#ef4444" size="large" onClick={() => handleSwipe('left', filteredCreators[0])} tooltip="Nope" />
@@ -312,12 +309,30 @@ const SwipeCard = ({ data, isTop, onSwipe, onOpenProfile }) => {
                 x: isTop ? x : 0, rotate: isTop ? rotate : 0, zIndex: isTop ? 20 : 10,
                 scale: isTop ? 1 : 0.95, y: isTop ? 0 : 10,
                 border: '1px solid var(--card-border)',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.2)', cursor: 'grab'
+                boxShadow: isTop ? '0 15px 40px rgba(0,0,0,0.2)' : '0 5px 15px rgba(0,0,0,0.1)',
+                cursor: 'grab',
+                willChange: 'transform' // PERFORMANCE: GPU Acceleration
             }}
-            drag={isTop ? "x" : false} dragConstraints={{ left: 0, right: 0 }} onDragEnd={handleDragEnd}
-            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: isTop ? 1 : 0.95, opacity: 1, y: isTop ? 0 : 10 }}
-            exit={{ x: x.get() < 0 ? -500 : 500, opacity: 0, transition: { duration: 0.2 } }}
-            whileTap={{ cursor: 'grabbing' }}
+            drag={isTop ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.7} // FLUIDITY: Looser drag feel
+            dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }} // SNAP BACK: Creating a satisfying bounce
+            onDragEnd={handleDragEnd}
+
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{
+                scale: isTop ? 1 : 0.95,
+                opacity: 1,
+                y: isTop ? 0 : 10,
+                transition: { type: "spring", stiffness: 300, damping: 30 } // SPRING STACK: Bouncy card promotion
+            }}
+            exit={{
+                x: x.get() < 0 ? -1000 : 1000, // Further exit distance
+                rotate: x.get() < 0 ? -45 : 45, // Add rotation to exit
+                opacity: 0,
+                transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            whileTap={{ cursor: 'grabbing', scale: 0.98 }}
         >
             {/* Tap Navigation for Images */}
             <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex' }}>

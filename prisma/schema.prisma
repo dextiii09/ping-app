@@ -49,6 +49,18 @@ model User {
   
   reportsMade     Report[] @relation("Reporter")
   reportsReceived Report[] @relation("Reported")
+
+  pushSubscriptions PushSubscription[]
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  endpoint  String
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }
 
 // ... existing models ...

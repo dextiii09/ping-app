@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Script from 'next/script'; // Import Script
 import styles from '../dashboard.module.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -30,22 +31,52 @@ export default function PremiumsPage() {
         const planId = getPlanId(index);
         if (tier === planId) return;
 
+        setLoading(true);
+
         try {
-            setLoading(true);
-            const res = await fetch('/api/checkout', {
+            // 1. Create Order
+            const res = await fetch('/api/razorpay/order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tier: planId })
             });
             const data = await res.json();
-            if (data.success && data.url) {
-                window.location.href = data.url;
-            } else {
-                alert("Checkout Error: " + (data.error || "Unknown"));
+
+            if (!data.success) {
+                alert("Order Creation Failed");
                 setLoading(false);
+                return;
             }
-        } catch (e) {
-            console.error(e);
+
+            // 2. Open Razorpay Modal
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_mock_key',
+                amount: data.order.amount,
+                currency: "INR",
+                name: "Ping App",
+                description: `Upgrade to Ping ${planId.charAt(0).toUpperCase() + planId.slice(1)}`,
+                order_id: data.order.id,
+                handler: function (response) {
+                    // Success! Redirect with success flag
+                    window.location.href = `/dashboard?payment=success&tier=${planId}&pid=${response.razorpay_payment_id}`;
+                },
+                prefill: {
+                    name: "User Name", // Ideally fetch from context
+                    email: "user@example.com",
+                    contact: "9999999999"
+                },
+                theme: {
+                    color: plans[index].color
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+            setLoading(false);
+
+        } catch (error) {
+            console.error(error);
+            alert("Payment Failed");
             setLoading(false);
         }
     };
@@ -130,8 +161,8 @@ export default function PremiumsPage() {
 
     return (
         <div className={styles.dashboardContainer} style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
-            {/* Header */}
             <header style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0 1rem' }}>
+                <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
                 <button onClick={() => router.back()} className={styles.iconBtn}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>

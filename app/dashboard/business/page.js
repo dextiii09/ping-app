@@ -136,6 +136,24 @@ export default function BusinessHome() {
         },
     ];
 
+    const handleToggleNotifications = async () => {
+        if (showNotifications) {
+            // Closing: Mark as read if there were unread items
+            if (unreadCount > 0) {
+                setUnreadCount(0); // Optimistic clear
+                try {
+                    await fetch('/api/notifications/read', { method: 'POST' });
+                } catch (e) {
+                    console.error("Failed to mark read");
+                }
+            }
+            setShowNotifications(false);
+        } else {
+            // Opening
+            setShowNotifications(true);
+        }
+    };
+
     return (
         <div className={styles.dashboardContainer}>
             <motion.header
@@ -173,7 +191,7 @@ export default function BusinessHome() {
                         className={styles.iconBtn}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setShowNotifications(!showNotifications)}
+                        onClick={handleToggleNotifications}
                         style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c1e', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e4e4e7' }}
                     >
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
