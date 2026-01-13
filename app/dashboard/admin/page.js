@@ -156,7 +156,7 @@ export default function AdminPage() {
                         <StatCard label="Users" value={stats.users} color="#3b82f6" compact />
                         <StatCard label="Pending" value={stats.reports} color="#ef4444" compact />
                     </div>
-                    <button onClick={handleLogout} style={{ padding: '8px 16px', background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
+                    <button onClick={handleLogout} style={{ padding: '8px 16px', background: 'var(--nav-pill-bg)', border: '1px solid var(--card-border)', color: 'var(--text-main)', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
                         Logout
                     </button>
                 </div>
@@ -499,8 +499,8 @@ const TabBtn = ({ label, icon, active, onClick, count }) => (
 );
 
 const Table = ({ children }) => (
-    <div style={{ width: '100%', overflowX: 'auto', background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 16, padding: '0.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0', color: '#e4e4e7', minWidth: '600px' }}>{children}</table>
+    <div style={{ width: '100%', overflowX: 'auto', background: 'var(--card-bg)', backdropFilter: 'blur(10px)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '0.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0', color: 'var(--text-main)', minWidth: '600px' }}>{children}</table>
     </div>
 );
 const THead = ({ children }) => <thead style={{ color: '#a1a1aa', fontSize: '0.8rem', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{children}</thead>;
@@ -533,7 +533,7 @@ const Badge = ({ children, color }) => {
 };
 
 const Avatar = ({ seed }) => (
-    <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: '#27272a', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
+    <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, border: '1px solid var(--card-border)' }}>
         <img
             src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`}
             alt="avatar"
@@ -557,8 +557,8 @@ const ActionBtn = ({ children, onClick, danger, success }) => (
     <button
         onClick={onClick}
         style={{
-            background: danger ? 'rgba(239, 68, 68, 0.1)' : success ? 'rgba(34, 197, 94, 0.1)' : '#27272a',
-            color: danger ? '#ef4444' : success ? '#22c55e' : '#e4e4e7',
+            background: danger ? 'rgba(239, 68, 68, 0.1)' : success ? 'rgba(34, 197, 94, 0.1)' : 'var(--nav-pill-bg)',
+            color: danger ? '#ef4444' : success ? '#22c55e' : 'var(--text-main)',
             border: 'none',
             padding: '6px 12px',
             borderRadius: 6,
