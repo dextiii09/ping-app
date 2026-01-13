@@ -70,11 +70,58 @@ export default function SettingsPage() {
         }
     };
 
-    const toggleNotification = (key) => {
+    const toggleNotification = async (key) => {
         const newVal = { ...notifications, [key]: !notifications[key] };
+
+        // Push Logic
+        if (key === 'push' && newVal.push) {
+            const success = await subscribeToPush();
+            if (!success) {
+                alert("Please enable notifications in your browser settings.");
+                return; // Don't toggle if failed
+            }
+        }
+
         setNotifications(newVal);
         savePreferences(newVal, null);
     };
+
+    const subscribeToPush = async () => {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') return false;
+
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
+            });
+
+            await fetch('/api/notifications/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subscription })
+            });
+            return true;
+        } catch (e) {
+            console.error("Push Subscribe Error:", e);
+            return false;
+        }
+    };
+
+    function urlBase64ToUint8Array(base64String) {
+        if (!base64String) return new Uint8Array(0);
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
 
     const togglePrivacy = (key) => {
         const newVal = { ...privacy, [key]: !privacy[key] };
