@@ -23,7 +23,7 @@
     z-index: 100;
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(236, 72, 153, 0.15));
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
     border-radius: 24px;
     padding: 16px 24px;
     margin: 0 0 2.5rem 0;
@@ -606,19 +606,19 @@
 
 /* Settings Page Styles */
 .settingsSection {
-    background: rgba(30, 30, 30, 0.6);
+    background: var(--card-bg);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
 }
 
 .sectionTitle {
     font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 1.2rem;
-    color: #fff;
+    color: var(--text-main);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -629,7 +629,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--card-border);
 }
 
 .settingItem:last-child {
@@ -637,7 +637,7 @@
 }
 
 .settingInfo h4 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1rem;
     margin-bottom: 0.2rem;
 }
@@ -651,7 +651,7 @@
 .toggleSwitch {
     width: 50px;
     height: 28px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--card-border);
     border-radius: 14px;
     position: relative;
     cursor: pointer;
@@ -680,11 +680,11 @@
 
 .inputField {
     width: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--nav-pill-bg);
+    border: 1px solid var(--card-border);
     padding: 10px 15px;
     border-radius: 8px;
-    color: white;
+    color: var(--text-main);
     font-size: 0.95rem;
     margin-top: 0.5rem;
 }
@@ -773,7 +773,7 @@
 
 /* Inner Content Container */
 .goldCardContent {
-    background: rgba(10, 10, 14, 0.95);
+    background: var(--surface);
     /* Very dark background */
     backdrop-filter: blur(20px);
     border-radius: 22px;
