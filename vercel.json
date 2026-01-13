@@ -1,7 +1,7 @@
 {
     "crons": [
         {
-            "path": "/api/notifications/run-cron",
+            "path": "/api/notify/run-cron",
             "schedule": "0 9 * * *"
         }
     ]

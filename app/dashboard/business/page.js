@@ -69,7 +69,7 @@ export default function BusinessHome() {
         // Poll for notifications
         const fetchNotifications = async () => {
             try {
-                const res = await fetch('/api/notifications/count');
+                const res = await fetch('/api/notify/count');
                 const data = await res.json();
                 setUnreadCount(data.count);
             } catch (e) {
@@ -142,7 +142,7 @@ export default function BusinessHome() {
             if (unreadCount > 0) {
                 setUnreadCount(0); // Optimistic clear
                 try {
-                    await fetch('/api/notifications/read', { method: 'POST' });
+                    await fetch('/api/notify/read', { method: 'POST' });
                 } catch (e) {
                     console.error("Failed to mark read");
                 }

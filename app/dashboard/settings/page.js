@@ -99,7 +99,7 @@ export default function SettingsPage() {
                 applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
             });
 
-            await fetch('/api/notifications/subscribe', {
+            await fetch('/api/notify/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ subscription })
