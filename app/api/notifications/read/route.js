@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from "@/app/lib/db";
+import { db } from "../../../lib/db";
 import { jwtVerify } from 'jose';
 
 export const dynamic = 'force-dynamic';
