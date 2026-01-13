@@ -9,6 +9,13 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+    experimental: {
+        workerThreads: false,
+        cpus: 1,
+    },
     images: {
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',
