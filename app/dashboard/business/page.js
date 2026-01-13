@@ -163,7 +163,7 @@ export default function BusinessHome() {
                 transition={{ duration: 0.5 }}
             >
                 <div>
-                    <h1 style={{ fontSize: '1.5rem', marginBottom: '2px' }}>
+                    <h1 className="gradient-text" style={{ fontSize: '1.5rem', marginBottom: '2px' }}>
                         <span className="gradient-text">{greeting}, Business</span> 🚀
                     </h1>
                     <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>Ready to scale?</p>
@@ -174,11 +174,11 @@ export default function BusinessHome() {
                     <span style={{
                         padding: '4px 10px',
                         borderRadius: '20px',
-                        background: tier === 'free' ? 'rgba(255,255,255,0.1)' : tier === 'plus' ? '#be123c' : tier === 'gold' ? '#b45309' : '#1f2937',
-                        color: 'white',
+                        background: tier === 'free' ? 'var(--nav-pill-bg)' : tier === 'plus' ? '#be123c' : tier === 'gold' ? '#b45309' : 'var(--surface)',
+                        color: 'var(--text-main)',
                         fontSize: '0.65rem',
                         fontWeight: '800',
-                        border: '1px solid rgba(255,255,255,0.15)',
+                        border: '1px solid var(--card-border)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px',
                         whiteSpace: 'nowrap',
@@ -192,7 +192,6 @@ export default function BusinessHome() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleToggleNotifications}
-                        style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c1e', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e4e4e7' }}
                     >
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                         {unreadCount > 0 && (
@@ -214,7 +213,6 @@ export default function BusinessHome() {
                             className={styles.iconBtn}
                             whileHover={{ scale: 1.05, rotate: 90 }}
                             whileTap={{ scale: 0.95 }}
-                            style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c1e', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e4e4e7' }}
                         >
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
