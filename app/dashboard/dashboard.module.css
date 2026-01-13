@@ -1517,7 +1517,7 @@
     height: 72vh;
     /* Adjusted for header/footer space */
     max-height: 680px;
-    background: #121212;
+    background: var(--surface);
     border-radius: 20px;
     /* Slightly less rounded */
     overflow: hidden;
@@ -1584,13 +1584,13 @@
 .upArrowBtn {
     width: 32px;
     height: 32px;
-    background: #1a1a1a;
+    background: var(--nav-pill-bg);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    border: 1px solid #333;
+    color: var(--text-main);
+    border: 1px solid var(--card-border);
     cursor: pointer;
     flex-shrink: 0;
 }
