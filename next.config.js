@@ -10,7 +10,8 @@
 const nextConfig = {
     reactStrictMode: true,
     experimental: {
-        // turbopack: false, 
+        workerThreads: false,
+        cpus: 1,
     },
     images: {
         dangerouslyAllowSVG: true,
