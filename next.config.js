@@ -1,19 +1,14 @@
-// const withPWA = require("@ducanh2912/next-pwa").default({
-//     dest: 'public',
-//     register: true,
-//     skipWaiting: true,
-//     importScripts: ['/custom-sw.js'], // Import Custom Push Logic
-//     disable: process.env.NODE_ENV === 'development',
-// });
+const withPWA = require("@ducanh2912/next-pwa").default({
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    importScripts: ['/custom-sw.js'],
+    disable: process.env.NODE_ENV === 'development',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    experimental: {
-        workerThreads: false,
-        cpus: 1,
-        turbopack: {},
-    },
     images: {
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',
@@ -35,4 +30,4 @@ const nextConfig = {
     },
 };
 
-module.exports = nextConfig; // withPWA(nextConfig);
+module.exports = withPWA(nextConfig);
