@@ -134,9 +134,16 @@
     /* Hide scrollbar Firefox */
 }
 
+/* Scrollbar hidden via global utility or globals.css */
+.carousel {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
 .carousel::-webkit-scrollbar {
     display: none;
-    /* Hide scrollbar Chrome/Safari */
 }
 
 @media (max-width: 768px) {

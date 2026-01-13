@@ -69,7 +69,7 @@ async function runTest() {
 
         // 4. NOTIFICATIONS COUNT
         console.log(`\n4. Testing Notifications API...`);
-        const notifRes = await fetch(`${BASE_URL}/api/notifications/count`, { headers });
+        const notifRes = await fetch(`${BASE_URL}/api/notify/count`, { headers });
         const notifData = await notifRes.json();
         if (notifRes.status === 200 && typeof notifData.count === 'number') {
             console.log("✅ Notifications API Verified");
