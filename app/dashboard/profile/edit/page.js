@@ -139,7 +139,7 @@ export default function EditProfilePage() {
     const getImage = (idx) => images[idx] || null;
 
     return (
-        <div className={styles.dashboardContainer} style={{ padding: 0, minHeight: '100vh', background: '#000' }}>
+        <div className={styles.dashboardContainer} style={{ padding: 0, minHeight: '100vh', background: 'var(--background)' }}>
             {/* STICKY HEADER WITH TABS */}
             <div className={styles.editTabs}>
                 <button
@@ -165,8 +165,10 @@ export default function EditProfilePage() {
                         padding: '8px 16px',
                         borderRadius: '20px',
                         fontWeight: 'bold',
+                        fontWeight: 'bold',
                         cursor: 'pointer',
-                        opacity: (loading || uploading) ? 0.7 : 1
+                        opacity: (loading || uploading) ? 0.7 : 1,
+                        color: 'white' // Gradient button text stays white
                     }}
                 >
                     {loading ? 'Saving...' : 'Save'}
@@ -181,7 +183,7 @@ export default function EditProfilePage() {
                     top: '15px',
                     left: '15px',
                     zIndex: 20,
-                    color: 'white',
+                    color: 'var(--text-main)',
                     fontSize: '1.5rem',
                     background: 'none',
                     border: 'none',
@@ -233,7 +235,7 @@ export default function EditProfilePage() {
                                                 position: 'relative'
                                             }}
                                         >
-                                            {!getImage(idx) && <span style={{ fontSize: '2rem', color: '#555' }}>+</span>}
+                                            {!getImage(idx) && <span style={{ fontSize: '2rem', color: 'var(--text-muted)' }}>+</span>}
                                             {idx === 0 && getImage(0) && <div className={styles.photoLabel}>Main</div>}
 
                                             <input
@@ -268,7 +270,7 @@ export default function EditProfilePage() {
                                         </div>
                                     ))}
                                 </div>
-                                {uploading && <p style={{ color: 'var(--secondary)', marginTop: 10 }}>Uploading...</p>}
+                                {uploading && <p style={{ color: 'var(--text-muted)', marginTop: 10 }}>Uploading...</p>}
                             </motion.section>
 
                             {/* ABOUT ME */}
@@ -277,12 +279,12 @@ export default function EditProfilePage() {
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                     About Me
                                 </div>
-                                <div className={styles.glassInput} style={{ background: 'rgba(0,0,0,0.2)', padding: '15px' }}>
+                                <div className={styles.glassInput} style={{ background: 'var(--nav-pill-bg)', padding: '15px' }}>
                                     <textarea
                                         name="about"
                                         value={formData.about}
                                         onChange={handleChange}
-                                        style={{ width: '100%', background: 'none', border: 'none', color: 'white', resize: 'none', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }}
+                                        style={{ width: '100%', background: 'none', border: 'none', color: 'var(--text-main)', resize: 'none', fontSize: '1rem', fontFamily: 'inherit', outline: 'none' }}
                                         rows="4"
                                     />
                                     <div className={styles.charCount}>{formData.about.length} / 500</div>
@@ -406,12 +408,12 @@ export default function EditProfilePage() {
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 100, overflowY: 'auto' }}
+                            style={{ position: 'fixed', inset: 0, background: 'var(--background)', zIndex: 100, overflowY: 'auto' }}
                         >
                             {/* Close Button */}
                             <button
                                 onClick={() => setShowPreviewModal(false)}
-                                style={{ position: 'absolute', top: 20, left: 20, zIndex: 10, background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%', width: 40, height: 40, color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                style={{ position: 'absolute', top: 20, left: 20, zIndex: 10, background: 'var(--nav-pill-bg)', border: 'none', borderRadius: '50%', width: 40, height: 40, color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 9l-7 7-7-7" /></svg>
                             </button>
@@ -433,22 +435,22 @@ export default function EditProfilePage() {
                             </div>
 
                             {/* Content Scroll */}
-                            <div style={{ padding: '20px', background: '#111', minHeight: '50vh', position: 'relative', top: -20, borderRadius: '24px 24px 0 0' }}>
-                                <h3 style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>About Me</h3>
-                                <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: '#fff', marginBottom: '2rem' }}>{formData.about}</p>
+                            <div style={{ padding: '20px', background: 'var(--surface)', minHeight: '50vh', position: 'relative', top: -20, borderRadius: '24px 24px 0 0' }}>
+                                <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>About Me</h3>
+                                <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: 'var(--text-main)', marginBottom: '2rem' }}>{formData.about}</p>
 
-                                <h3 style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>Interests</h3>
+                                <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>Interests</h3>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', marginBottom: '2rem' }}>
                                     {formData.interests.map((tag, i) => (
-                                        <span key={i} style={{ padding: '8px 16px', borderRadius: 20, background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '0.9rem' }}>{tag}</span>
+                                        <span key={i} style={{ padding: '8px 16px', borderRadius: 20, background: 'var(--nav-pill-bg)', color: 'var(--text-main)', fontSize: '0.9rem' }}>{tag}</span>
                                     ))}
                                 </div>
 
-                                <h3 style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>Socials</h3>
+                                <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 1 }}>Socials</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {formData.instagram && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: 12 }}><span>Instagram</span><span style={{ color: '#3b82f6' }}>{formData.instagram}</span></div>}
-                                    {formData.youtube && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: 12 }}><span>YouTube</span><span style={{ color: '#ef4444' }}>{formData.youtube}</span></div>}
-                                    {formData.tiktok && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: 12 }}><span>TikTok</span><span style={{ color: '#ec4899' }}>{formData.tiktok}</span></div>}
+                                    {formData.instagram && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'var(--nav-pill-bg)', borderRadius: 12 }}><span>Instagram</span><span style={{ color: '#3b82f6' }}>{formData.instagram}</span></div>}
+                                    {formData.youtube && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'var(--nav-pill-bg)', borderRadius: 12 }}><span>YouTube</span><span style={{ color: '#ef4444' }}>{formData.youtube}</span></div>}
+                                    {formData.tiktok && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: 'var(--nav-pill-bg)', borderRadius: 12 }}><span>TikTok</span><span style={{ color: '#ec4899' }}>{formData.tiktok}</span></div>}
                                 </div>
                             </div>
                         </motion.div>
