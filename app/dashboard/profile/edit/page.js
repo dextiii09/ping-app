@@ -21,6 +21,8 @@ export default function EditProfilePage() {
     const [images, setImages] = useState([]);
 
     const [formData, setFormData] = useState({
+        name: "",
+        age: "",
         about: "",
         jobTitle: "",
         company: "Self Employed",
@@ -43,9 +45,13 @@ export default function EditProfilePage() {
                 if (data.profile) {
                     setFormData(prev => ({
                         ...prev,
+                        name: data.profile.user?.name || data.profile.name || "", // Safety check
+                        age: data.profile.age || "",
                         about: data.profile.about || "",
                         instagram: data.profile.instagram || "",
-                        // map other fields if they existed in backend
+                        jobTitle: data.profile.jobTitle || "",
+                        company: data.profile.company || "",
+                        college: data.profile.college || "",
                     }));
                     if (data.profile.images && Array.isArray(data.profile.images)) {
                         setImages(data.profile.images);
@@ -374,8 +380,8 @@ export default function EditProfilePage() {
                                 {/* Info Content */}
                                 <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: 24, pointerEvents: 'none', zIndex: 15 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                                        <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: 'white' }}>Dhruv</h2>
-                                        <span style={{ fontSize: '1.4rem', fontWeight: 400, opacity: 0.9, color: 'white' }}>22</span>
+                                        <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: 'white' }}>{formData.name || 'Your Name'}</h2>
+                                        <span style={{ fontSize: '1.4rem', fontWeight: 400, opacity: 0.9, color: 'white' }}>{formData.age}</span>
                                     </div>
 
                                     {/* Action Button Lookalike */}
@@ -420,8 +426,8 @@ export default function EditProfilePage() {
                                 <div className={styles.overlay}></div>
                                 <div className={styles.premiumInfo} style={{ bottom: 40 }}>
                                     <div className={styles.nameRow}>
-                                        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Dhruv</h1>
-                                        <span style={{ fontSize: '1.8rem', fontWeight: 400, opacity: 0.9 }}>22</span>
+                                        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{formData.name || 'Your Name'}</h1>
+                                        <span style={{ fontSize: '1.8rem', fontWeight: 400, opacity: 0.9 }}>{formData.age}</span>
                                     </div>
                                 </div>
                             </div>
