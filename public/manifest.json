@@ -4,7 +4,7 @@
     "description": "Premium Business-Influencer Collaboration Platform",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0a0a0a",
+    "background_color": "#121212",
     "theme_color": "#8a2be2",
     "icons": [
         {
