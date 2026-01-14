@@ -147,8 +147,6 @@ export default function SettingsPage() {
         }
     };
 
-    if (loading) return <div className={styles.loading}>Loading settings...</div>;
-
     return (
         <motion.div
             className={styles.dashboardContainer}
@@ -185,112 +183,129 @@ export default function SettingsPage() {
 
             <main style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: 100 }}>
 
-                {/* Appearance - Theme */}
-                <motion.section className={styles.settingsSection} variants={itemVariants}>
-                    <div className={styles.sectionTitle}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        Appearance
+                {loading ? (
+                    // Skeleton Loading State
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className={styles.settingsSection} style={{ height: 150, display: 'flex', flexDirection: 'column', gap: 15, justifyContent: 'center' }}>
+                                <div style={{ width: 120, height: 20, background: 'var(--nav-pill-bg)', borderRadius: 4, animation: 'pulse 1.5s infinite' }}></div>
+                                <div style={{ width: '100%', height: 60, background: 'var(--nav-pill-bg)', borderRadius: 12, opacity: 0.5, animation: 'pulse 1.5s infinite delay-100' }}></div>
+                            </div>
+                        ))}
+                        <style jsx>{`
+                            @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
+                        `}</style>
                     </div>
-                    <ThemeToggle />
-                </motion.section>
+                ) : (
+                    <>
+                        {/* Appearance - Theme */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants}>
+                            <div className={styles.sectionTitle}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                Appearance
+                            </div>
+                            <ThemeToggle />
+                        </motion.section>
 
-                {/* Account Settings */}
-                <motion.section className={styles.settingsSection} variants={itemVariants}>
-                    <div className={styles.sectionTitle}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                        Account
-                    </div>
-                    {/* Email is typically read-only or requires re-auth flow which is complex, keeping simple for now */}
-                    <div className={styles.settingItem}>
-                        <div className={styles.settingInfo}>
-                            <h4>Password</h4>
-                            <p>Update your login password</p>
-                        </div>
-                        <button
-                            className={styles.editProfileBtn}
-                            onClick={() => setShowPasswordModal(true)}
-                            style={{ padding: '6px 16px', fontSize: '0.9rem' }}
-                        >
-                            Change
-                        </button>
-                    </div>
-                </motion.section>
+                        {/* Account Settings */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants}>
+                            <div className={styles.sectionTitle}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                Account
+                            </div>
+                            {/* Email is typically read-only or requires re-auth flow which is complex, keeping simple for now */}
+                            <div className={styles.settingItem}>
+                                <div className={styles.settingInfo}>
+                                    <h4>Password</h4>
+                                    <p>Update your login password</p>
+                                </div>
+                                <button
+                                    className={styles.editProfileBtn}
+                                    onClick={() => setShowPasswordModal(true)}
+                                    style={{ padding: '6px 16px', fontSize: '0.9rem' }}
+                                >
+                                    Change
+                                </button>
+                            </div>
+                        </motion.section>
 
-                {/* Notifications */}
-                <motion.section className={styles.settingsSection} variants={itemVariants}>
-                    <div className={styles.sectionTitle}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                        Notifications
-                    </div>
-                    <ToggleItem
-                        label="Push Notifications"
-                        desc="Receive alerts on your device"
-                        isActive={notifications.push}
-                        onToggle={() => toggleNotification('push')}
-                    />
-                    <ToggleItem
-                        label="Email Updates"
-                        desc="Get weekly digest and match emails"
-                        isActive={notifications.email}
-                        onToggle={() => toggleNotification('email')}
-                    />
-                    <ToggleItem
-                        label="Marketing"
-                        desc="Receive offers and promotions"
-                        isActive={notifications.marketing}
-                        onToggle={() => toggleNotification('marketing')}
-                    />
-                </motion.section>
+                        {/* Notifications */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants}>
+                            <div className={styles.sectionTitle}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                Notifications
+                            </div>
+                            <ToggleItem
+                                label="Push Notifications"
+                                desc="Receive alerts on your device"
+                                isActive={notifications.push}
+                                onToggle={() => toggleNotification('push')}
+                            />
+                            <ToggleItem
+                                label="Email Updates"
+                                desc="Get weekly digest and match emails"
+                                isActive={notifications.email}
+                                onToggle={() => toggleNotification('email')}
+                            />
+                            <ToggleItem
+                                label="Marketing"
+                                desc="Receive offers and promotions"
+                                isActive={notifications.marketing}
+                                onToggle={() => toggleNotification('marketing')}
+                            />
+                        </motion.section>
 
-                {/* Privacy */}
-                <motion.section className={styles.settingsSection} variants={itemVariants}>
-                    <div className={styles.sectionTitle}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        Privacy
-                    </div>
-                    <ToggleItem
-                        label="Private Profile"
-                        desc="Only show profile to matches"
-                        isActive={privacy.privateProfile}
-                        onToggle={() => togglePrivacy('privateProfile')}
-                    />
-                    <ToggleItem
-                        label="Activity Status"
-                        desc="Show when you were last active"
-                        isActive={privacy.activityStatus}
-                        onToggle={() => togglePrivacy('activityStatus')}
-                    />
-                </motion.section>
+                        {/* Privacy */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants}>
+                            <div className={styles.sectionTitle}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                Privacy
+                            </div>
+                            <ToggleItem
+                                label="Private Profile"
+                                desc="Only show profile to matches"
+                                isActive={privacy.privateProfile}
+                                onToggle={() => togglePrivacy('privateProfile')}
+                            />
+                            <ToggleItem
+                                label="Activity Status"
+                                desc="Show when you were last active"
+                                isActive={privacy.activityStatus}
+                                onToggle={() => togglePrivacy('activityStatus')}
+                            />
+                        </motion.section>
 
-                {/* Customer Support */}
-                <motion.section className={styles.settingsSection} variants={itemVariants}>
-                    <div className={styles.sectionTitle}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        Customer Support
-                    </div>
-                    <SupportForm />
-                </motion.section>
+                        {/* Customer Support */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants}>
+                            <div className={styles.sectionTitle}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                Customer Support
+                            </div>
+                            <SupportForm />
+                        </motion.section>
 
-                {/* Danger Zone */}
-                <motion.section className={styles.settingsSection} variants={itemVariants} style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
-                    <div className={styles.sectionTitle} style={{ color: '#ef4444' }}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                        Danger Zone
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <button className={styles.dangerBtn} onClick={handleLogout}>
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                            Log Out
-                        </button>
-                        <button
-                            className={styles.dangerBtn}
-                            style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444' }}
-                            onClick={() => setShowDeleteModal(true)}
-                        >
-                            Delete Account
-                        </button>
-                    </div>
-                </motion.section>
+                        {/* Danger Zone */}
+                        <motion.section className={styles.settingsSection} variants={itemVariants} style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className={styles.sectionTitle} style={{ color: '#ef4444' }}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                Danger Zone
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <button className={styles.dangerBtn} onClick={handleLogout}>
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                    Log Out
+                                </button>
+                                <button
+                                    className={styles.dangerBtn}
+                                    style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444' }}
+                                    onClick={() => setShowDeleteModal(true)}
+                                >
+                                    Delete Account
+                                </button>
+                            </div>
+                        </motion.section>
+                    </>
+                )}
 
             </main>
         </motion.div>

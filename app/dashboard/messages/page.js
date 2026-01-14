@@ -215,7 +215,7 @@ export default function MessagesPage() {
                                     placeholder="Type a message..."
                                 />
                                 <button type="submit" className={styles.sendBtn}>
-                                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                 </button>
                             </form>
                         </div>
