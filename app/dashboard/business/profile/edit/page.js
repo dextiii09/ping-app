@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../../../dashboard.module.css';
@@ -35,6 +35,29 @@ export default function BusinessEditProfilePage() {
         twitter: "@ping",
         linkedin: "linkedin.com/company/ping"
     });
+
+    // Fetch Profile Data
+    useEffect(() => {
+        fetch('/api/profile/update')
+            .then(res => res.json())
+            .then(data => {
+                if (data.profile) {
+                    setFormData(prev => ({
+                        ...prev,
+                        about: data.profile.about || "",
+                        company: data.profile.company || "",
+                        industry: data.profile.industry || "",
+                        website: data.profile.website || "",
+                        size: data.profile.size || "11-50 Employees",
+                        lookingFor: data.profile.lookingFor || "",
+                        instagram: data.profile.instagram || "",
+                        twitter: data.profile.twitter || "",
+                        linkedin: data.profile.linkedin || "",
+                    }));
+                }
+            })
+            .catch(err => console.error(err));
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -284,8 +307,8 @@ export default function BusinessEditProfilePage() {
                                 <div className={styles.overlay}></div>
                                 <div className={styles.premiumInfo} style={{ bottom: 40 }}>
                                     <div className={styles.nameRow}>
-                                        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Dhruv</h1>
-                                        <span style={{ fontSize: '1.8rem', fontWeight: 400, opacity: 0.9 }}>22</span>
+                                        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{formData.company || 'Brand Name'}</h1>
+                                        <span style={{ fontSize: '1.2rem', fontWeight: 400, opacity: 0.9 }}>{formData.industry}</span>
                                     </div>
                                 </div>
                             </div>
