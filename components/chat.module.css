@@ -338,13 +338,16 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .container {
-        height: 100vh;
+        height: 100dvh;
+        /* Dynamic Viewport Height for mobile browsers */
+        width: 100%;
         border-radius: 0;
         border: none;
         background: var(--background);
         position: fixed;
         inset: 0;
         z-index: 1000;
+        margin: 0;
         /* On top of everything */
     }
 
@@ -373,8 +376,16 @@
     }
 
     .inputContainer {
-        width: 95%;
-        bottom: 15px;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        position: fixed;
+        /* Stick to viewport */
+        padding: 10px 15px;
+        background: linear-gradient(to top, var(--background) 80%, transparent);
+        /* Fade bg behind input */
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
     }
 
     .hiddenOnMobile {
