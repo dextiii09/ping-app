@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
 import { db } from "../../../lib/db";
-import webpush from 'web-push';
-
-export const dynamic = 'force-dynamic';
-
 
 export async function GET(request) {
     if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
@@ -11,6 +7,7 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
     }
 
+    const webpush = await import('web-push');
     webpush.setVapidDetails(
         'mailto:dhruv@antigravity.com',
         process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
