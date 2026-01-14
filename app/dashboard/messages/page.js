@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from '@/components/chat.module.css';
 
 export default function MessagesPage() {
@@ -12,17 +13,24 @@ export default function MessagesPage() {
     const [loading, setLoading] = useState(true);
     const [reportModal, setReportModal] = useState({ show: false, targetId: null, name: '' });
 
-    // 1. Fetch Conversations (Matches)
+    const messagesEndRef = useRef(null);
+
+    // Scroll to bottom on new messages
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    // 1. Fetch Conversations
     const fetchConversations = async () => {
         try {
             const res = await fetch('/api/messages/conversations');
             const data = await res.json();
             if (data.success) {
                 setMatches(data.conversations);
-                // Optionally select first match if none selected
-                if (!activeMatch && data.conversations.length > 0) {
-                    // setActiveMatch(data.conversations[0]); 
-                }
             }
         } catch (error) {
             console.error("Failed to fetch conversations", error);
@@ -33,11 +41,11 @@ export default function MessagesPage() {
 
     useEffect(() => {
         fetchConversations();
-        const interval = setInterval(fetchConversations, 10000); // Poll list every 10s
+        const interval = setInterval(fetchConversations, 10000);
         return () => clearInterval(interval);
     }, []);
 
-    // 2. Fetch Messages for Active Match
+    // 2. Fetch Messages
     const fetchMessages = async (matchId) => {
         if (!matchId) return;
         try {
@@ -54,7 +62,7 @@ export default function MessagesPage() {
     useEffect(() => {
         if (activeMatch) {
             fetchMessages(activeMatch.id);
-            const interval = setInterval(() => fetchMessages(activeMatch.id), 3000); // Poll chat every 3s
+            const interval = setInterval(() => fetchMessages(activeMatch.id), 3000);
             return () => clearInterval(interval);
         } else {
             setMessages([]);
@@ -70,7 +78,13 @@ export default function MessagesPage() {
         const textToSend = input;
 
         // Optimistic Update
-        const optimisticMsg = { id: tempId, text: textToSend, sender: "me" };
+        const optimisticMsg = {
+            id: tempId,
+            text: textToSend,
+            sender: "me",
+            createdAt: new Date().toISOString()
+        };
+
         setMessages(prev => [...prev, optimisticMsg]);
         setInput("");
 
@@ -82,9 +96,8 @@ export default function MessagesPage() {
             });
             const data = await res.json();
             if (data.success) {
-                // Replace optimistic msg (or just re-fetch next poll will fix it)
                 setMessages(prev => prev.map(m => m.id === tempId ? data.message : m));
-                fetchConversations(); // Update last msg in sidebar
+                fetchConversations();
             }
         } catch (error) {
             console.error("Failed to send", error);
@@ -95,18 +108,14 @@ export default function MessagesPage() {
         <div className={styles.container}>
             {/* SIDEBAR */}
             <div className={`${styles.sidebar} ${activeMatch ? styles.hiddenOnMobile : ''}`}>
-                <div style={{ padding: '1rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <button
-                        onClick={() => router.back()}
-                        style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, display: 'flex' }}
-                    >
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                    </button>
+                <div className={styles.sidebarHeader}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>
                     Messages
                 </div>
+
                 <div className={styles.matchList}>
-                    {loading && <div style={{ padding: 20, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading conversations...</div>}
-                    {!loading && matches.length === 0 && <div style={{ padding: 20, color: 'var(--text-muted)', fontSize: '0.9rem' }}>No matches yet. Go swipe!</div>}
+                    {loading && <div style={{ padding: 20, color: 'var(--text-muted)' }}>Loading...</div>}
+                    {!loading && matches.length === 0 && <div style={{ padding: 20, color: 'var(--text-muted)' }}>No matches yet. Go swipe!</div>}
 
                     {matches.map(match => (
                         <div
@@ -115,12 +124,15 @@ export default function MessagesPage() {
                             onClick={() => setActiveMatch(match)}
                         >
                             <div className={styles.avatar}>
-                                {match.image ? <img src={match.image} alt={match.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : match.name[0]}
+                                {match.image ?
+                                    <img src={match.image} alt={match.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    : match.name[0]
+                                }
                             </div>
-                            <div style={{ overflow: 'hidden', width: '100%' }}>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
                                 <div className={styles.matchName}>
                                     {match.name}
-                                    <span style={{ float: 'right', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 400 }}>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 400, opacity: 0.7 }}>
                                         {new Date(match.lastMsgTime).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                     </span>
                                 </div>
@@ -132,62 +144,95 @@ export default function MessagesPage() {
             </div>
 
             {/* CHAT AREA */}
-            <div className={`${styles.chatArea} ${!activeMatch ? styles.hiddenOnMobile : ''}`}>
+            <AnimatePresence mode="wait">
                 {activeMatch ? (
-                    <>
-                        <div className={styles.chatHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <motion.div
+                        key="chat"
+                        className={`${styles.chatArea} ${!activeMatch ? styles.hiddenOnMobile : ''}`}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {/* Header */}
+                        <div className={styles.chatHeader}>
+                            <div className={styles.headerInfo}>
                                 <button
-                                    onClick={() => setActiveMatch(null)}
                                     className={styles.mobileBackBtn}
-                                    style={{
-                                        display: 'none', /* Hidden by default, shown via media query in css ideally or inline logic */
-                                        background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', marginRight: 5
-                                    }}
+                                    style={{ display: 'none' }}
+                                    onClick={() => setActiveMatch(null)}
                                 >
-                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
                                 </button>
+
                                 <div className={styles.avatar}>
-                                    {activeMatch.image ? <img src={activeMatch.image} alt={activeMatch.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : activeMatch.name[0]}
+                                    {activeMatch.image ?
+                                        <img src={activeMatch.image} alt={activeMatch.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        : activeMatch.name[0]
+                                    }
                                 </div>
-                                <h3>{activeMatch.name}</h3>
+                                <div className={styles.headerName}>{activeMatch.name}</div>
                             </div>
+
                             <button
+                                className={styles.reportBtn}
                                 onClick={() => setReportModal({ show: true, targetId: activeMatch.otherUserId, name: activeMatch.name, contextId: activeMatch.id })}
-                                style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1rem' }}
                                 title="Report User"
                             >
-                                ⚠️
+                                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4m0 4h.01" /></svg>
                             </button>
                         </div>
 
+                        {/* Messages List */}
                         <div className={styles.messages}>
                             {messages.map((msg, idx) => (
-                                <div key={msg.id || idx} className={`${styles.message} ${msg.sender === 'me' ? styles.sent : styles.received}`}>
-                                    {msg.text}
-                                </div>
+                                <motion.div
+                                    key={msg.id || idx}
+                                    className={`${styles.messageWrapper} ${msg.sender === 'me' ? styles.sentWrapper : styles.receivedWrapper}`}
+                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <div className={`${styles.message} ${msg.sender === 'me' ? styles.sent : styles.received}`}>
+                                        {msg.text}
+                                    </div>
+                                    <div className={styles.timestamp}>
+                                        {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
+                                </motion.div>
                             ))}
-                            {messages.length === 0 && <div style={{ textAlign: 'center', color: '#666', marginTop: 20 }}>Say hi to {activeMatch.name}! 👋</div>}
+                            <div ref={messagesEndRef} />
                         </div>
 
-                        <form className={styles.inputArea} onSubmit={handleSend}>
-                            <input
-                                className={styles.textInput}
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                placeholder="Type a message..."
-                            />
-                            <button type="submit" className={styles.sendBtn}>➤</button>
-                        </form>
-                    </>
+                        {/* Floating Input */}
+                        <div className={styles.inputContainer}>
+                            <form className={styles.inputArea} onSubmit={handleSend}>
+                                <input
+                                    className={styles.textInput}
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    placeholder="Type a message..."
+                                />
+                                <button type="submit" className={styles.sendBtn}>
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </motion.div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#444' }}>
-                        <div style={{ fontSize: '3rem', marginBottom: 20 }}>💬</div>
-                        <h3>Select a conversation</h3>
-                    </div>
+                    <motion.div
+                        className={`${styles.chatArea} ${!activeMatch ? styles.hiddenOnMobile : ''}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>💬</div>
+                            <h3>Select a conversation to start chatting</h3>
+                        </div>
+                    </motion.div>
                 )}
-            </div>
-            {/* Report Modal */}
+            </AnimatePresence>
+
             <ReportModal
                 show={reportModal.show}
                 onClose={() => setReportModal({ ...reportModal, show: false })}
@@ -232,15 +277,15 @@ const ReportModal = ({ show, onClose, targetId, targetName, type, contextId }) =
     };
 
     return (
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ background: '#1c1c1e', padding: 25, borderRadius: 16, width: '90%', maxWidth: 350, border: '1px solid #333', color: 'white' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#1c1c1e', padding: 25, borderRadius: 24, width: '90%', maxWidth: 350, border: '1px solid #333', color: 'white', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
                 <h3 style={{ margin: '0 0 10px 0' }}>Report {targetName}</h3>
                 <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: 15 }}>Why are you reporting this user?</p>
 
                 <select
                     value={reason}
                     onChange={e => setReason(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, background: '#333', border: '1px solid #444', color: 'white', marginBottom: 15 }}
+                    style={{ width: '100%', padding: 12, borderRadius: 12, background: '#333', border: '1px solid #444', color: 'white', marginBottom: 15, outline: 'none' }}
                 >
                     <option value="">Select a reason</option>
                     <option value="Spam">Spam/Scam</option>
@@ -250,11 +295,11 @@ const ReportModal = ({ show, onClose, targetId, targetName, type, contextId }) =
                 </select>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                    <button onClick={onClose} style={{ padding: '8px 16px', background: 'transparent', color: '#888', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                    <button onClick={onClose} style={{ padding: '10px 16px', background: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
                     <button
                         onClick={handleSubmit}
                         disabled={status === 'submitting' || !reason}
-                        style={{ padding: '8px 16px', background: status === 'success' ? '#22c55e' : '#ef4444', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer' }}
+                        style={{ padding: '10px 20px', background: status === 'success' ? '#22c55e' : '#ef4444', color: 'white', border: 'none', borderRadius: 12, cursor: 'pointer', fontWeight: 600 }}
                     >
                         {status === 'success' ? 'Reported' : 'Submit Report'}
                     </button>
