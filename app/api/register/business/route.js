@@ -26,7 +26,7 @@ export async function POST(request) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
 
-        // Create User
+        // Create User & Profile Transactionally
         const user = await db.user.create({
             data: {
                 email,
@@ -34,23 +34,20 @@ export async function POST(request) {
                 role: "BUSINESS",
                 isVerified: false,
                 tier: "free",
-                otp, // Save OTP
-                otpExpires // Save OTP expiration
-            }
-        });
-
-        // Create Profile
-        await db.businessProfile.create({
-            data: {
-                userId: user.id,
-                companyName,
-                niche,
-                location: location || "Global",
-                budget: budget || "Not Disclosed",
-                requirements: requirements || "Generic",
-                images: "[]", // Default empty JSON array
-                website: "",
-                logo: ""
+                otp,
+                otpExpires,
+                businessProfile: {
+                    create: {
+                        companyName,
+                        niche,
+                        location: location || "Global",
+                        budget: budget || "Not Disclosed",
+                        requirements: requirements || "Generic",
+                        images: "[]",
+                        website: "",
+                        logo: ""
+                    }
+                }
             }
         });
 
@@ -60,6 +57,6 @@ export async function POST(request) {
         return NextResponse.json({ success: true, email: user.email }, { status: 201 });
     } catch (error) {
         console.error("Registration Error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
