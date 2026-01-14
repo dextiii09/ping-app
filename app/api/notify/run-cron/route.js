@@ -4,13 +4,19 @@ import webpush from 'web-push';
 
 export const dynamic = 'force-dynamic';
 
-webpush.setVapidDetails(
-    'mailto:dhruv@antigravity.com',
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-);
 
 export async function GET(request) {
+    if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+        console.error("VAPID Keys missing");
+        return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+    }
+
+    webpush.setVapidDetails(
+        'mailto:dhruv@antigravity.com',
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    );
+
     // 1. Verify Vercel Cron Secret (Security)
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && process.env.NODE_ENV === 'production') {
